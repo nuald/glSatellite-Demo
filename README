@@ -1,0 +1,35 @@
+# Installation instructions
+
+Shell commands:
+
+    $ cd google-play-services_lib/
+    $ android update project -p .
+    $ ant debug
+    $ cd ../v7-appcompat_lib/
+    $ android update project -p .
+    $ ant debug
+    $ cd ../glSatellite/
+    $ android update project -p .
+    $ ant debug install
+
+# TODO
+
+ - test offline mode
+ - fix logging messages in Java
+ - star.bmp -> png
+
+# Long term TODO
+
+ - optimize beams to use minimum vertexes
+ - add animation to beam lights
+ - add legend for the beams
+ - calculate quaternions in shaders
+ - use own camera class to limit zoom in/out with momentum
+ - rotate initial position to the longitude of the user location
+
+# References
+
+The Official Khronos WebGL Repository: https://github.com/KhronosGroup/WebGL
+NASA Earth textures: http://earthobservatory.nasa.gov/Features/BlueMarble/
+NORAD Two-Line Element Sets Current Data: http://www.celestrak.com/NORAD/elements/
+Real Time Satellite Tracking And Predictions: http://www.n2yo.com/

@@ -1,0 +1,7 @@
+syntax: glob
+glSatellite/bin/*
+glSatellite/obj/*
+glSatellite/gen/*
+glSatellite/libs/*
+google-play-services_lib/bin/*
+google-play-services_lib/gen/*

@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_sat_pref_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="4.5sp"
+    android:paddingLeft="9.5sp"
+    android:paddingTop="4.5sp" >
+
+    <RadioGroup
+        android:id="@+id/radiogrp_db"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_title_db_special"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_tle_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="tle-new"
+            android:text="@string/title_tle_new" />
+
+        <RadioButton
+            android:id="@+id/radio_stations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="stations"
+            android:text="@string/title_stations" />
+
+        <RadioButton
+            android:id="@+id/radio_visual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="visual"
+            android:text="@string/title_visual" />
+
+        <RadioButton
+            android:id="@+id/radio_1999_025"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="1999-025"
+            android:text="@string/title_1999_025" />
+
+        <RadioButton
+            android:id="@+id/radio_iridium_33_debris"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="iridium-33-debris"
+            android:text="@string/title_iridium_33_debris" />
+
+        <RadioButton
+            android:id="@+id/radio_cosmos_2251_debris"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="cosmos-2251-debris"
+            android:text="@string/title_cosmos_2251_debris" />
+
+        <RadioButton
+            android:id="@+id/radio_2012_044"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="2012-044"
+            android:text="@string/title_2012_044" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="14.5sp"
+            android:text="@string/pref_title_db_earth"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="weather"
+            android:text="@string/title_weather" />
+
+        <RadioButton
+            android:id="@+id/radio_noaa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="noaa"
+            android:text="@string/title_noaa" />
+
+        <RadioButton
+            android:id="@+id/radio_goes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="goes"
+            android:text="@string/title_goes" />
+
+        <RadioButton
+            android:id="@+id/radio_resource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="resource"
+            android:text="@string/title_resource" />
+
+        <RadioButton
+            android:id="@+id/radio_sarsat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="sarsat"
+            android:text="@string/title_sarsat" />
+
+        <RadioButton
+            android:id="@+id/radio_dmc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="dmc"
+            android:text="@string/title_dmc" />
+
+        <RadioButton
+            android:id="@+id/radio_tdrss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="tdrss"
+            android:text="@string/title_tdrss" />
+
+        <RadioButton
+            android:id="@+id/radio_argos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="argos"
+            android:text="@string/title_argos" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="14.5sp"
+            android:text="@string/pref_title_db_comm"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_geo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="geo"
+            android:text="@string/title_geo" />
+
+        <RadioButton
+            android:id="@+id/radio_intelsat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="intelsat"
+            android:text="@string/title_intelsat" />
+
+        <RadioButton
+            android:id="@+id/radio_gorizont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="gorizont"
+            android:text="@string/title_gorizont" />
+
+        <RadioButton
+            android:id="@+id/radio_raduga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="raduga"
+            android:text="@string/title_raduga" />
+
+        <RadioButton
+            android:id="@+id/radio_molniya"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="molniya"
+            android:text="@string/title_molniya" />
+
+        <RadioButton
+            android:id="@+id/radio_iridium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="iridium"
+            android:text="@string/title_iridium" />
+
+        <RadioButton
+            android:id="@+id/radio_orbcomm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="orbcomm"
+            android:text="@string/title_orbcomm" />
+
+        <RadioButton
+            android:id="@+id/radio_globalstar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="globalstar"
+            android:text="@string/title_globalstar" />
+
+        <RadioButton
+            android:id="@+id/radio_amateur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="amateur"
+            android:text="@string/title_amateur" />
+
+        <RadioButton
+            android:id="@+id/radio_x_comm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="x-comm"
+            android:text="@string/title_x_comm" />
+
+        <RadioButton
+            android:id="@+id/radio_other_comm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="other-comm"
+            android:text="@string/title_other_comm" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="14.5sp"
+            android:text="@string/pref_title_db_nav"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_gps_ops"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="gps-ops"
+            android:text="@string/title_gps_ops" />
+
+        <RadioButton
+            android:id="@+id/radio_glo_ops"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="glo-ops"
+            android:text="@string/title_glo_ops" />
+
+        <RadioButton
+            android:id="@+id/radio_galileo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="galileo"
+            android:text="@string/title_galileo" />
+
+        <RadioButton
+            android:id="@+id/radio_beidou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="beidou"
+            android:text="@string/title_beidou" />
+
+        <RadioButton
+            android:id="@+id/radio_sbas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="sbas"
+            android:text="@string/title_sbas" />
+
+        <RadioButton
+            android:id="@+id/radio_nnss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="nnss"
+            android:text="@string/title_nnss" />
+
+        <RadioButton
+            android:id="@+id/radio_musson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="musson"
+            android:text="@string/title_musson" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="14.5sp"
+            android:text="@string/pref_title_db_sci"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_science"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="science"
+            android:text="@string/title_science" />
+
+        <RadioButton
+            android:id="@+id/radio_geodetic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="geodetic"
+            android:text="@string/title_geodetic" />
+
+        <RadioButton
+            android:id="@+id/radio_engineering"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="engineering"
+            android:text="@string/title_engineering" />
+
+        <RadioButton
+            android:id="@+id/radio_education"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="education"
+            android:text="@string/title_education" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="14.5sp"
+            android:text="@string/pref_title_db_misc"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioButton
+            android:id="@+id/radio_military"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="military"
+            android:text="@string/title_military" />
+
+        <RadioButton
+            android:id="@+id/radio_radar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="radar"
+            android:text="@string/title_radar" />
+
+        <RadioButton
+            android:id="@+id/radio_cubesats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="cubesats"
+            android:text="@string/title_cubesats" />
+
+        <RadioButton
+            android:id="@+id/radio_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="other"
+            android:text="@string/title_other" />
+    </RadioGroup>
+
+</ScrollView>
