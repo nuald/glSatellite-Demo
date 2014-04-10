@@ -10,6 +10,7 @@ Shell commands:
     $ ant debug
     $ cd ../glSatellite/
     $ android update project -p .
+    $ ndk-build
     $ ant debug install
 
 # TODO

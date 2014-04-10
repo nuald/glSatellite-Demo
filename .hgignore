@@ -5,3 +5,5 @@ glSatellite/gen/*
 glSatellite/libs/*
 google-play-services_lib/bin/*
 google-play-services_lib/gen/*
+v7-appcompat_lib/bin/*
+v7-appcompat_lib/gen/*
