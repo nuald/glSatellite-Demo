@@ -267,7 +267,7 @@ void GlobeRenderer::Init() {
             "bg_fshader.fsh");
 
     texture_ = JNIHelper::GetInstance()->LoadTexture("earth.png");
-    star_texture_ = JNIHelper::GetInstance()->LoadTexture("star.bmp");
+    star_texture_ = JNIHelper::GetInstance()->LoadTexture("star.png");
 
     glGenBuffers(MAX_BUFFERS, buffer_);
     MakeSphere(30, 30);
