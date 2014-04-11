@@ -3,6 +3,7 @@
 Technological demo featuring various areas as using OpenGL ES with Android NDK, custom message queues, interacting JNI and Java activities, using NORAD databases and parsing their data.
 
 Features:
+
  - Edit
  - C++11 with clang compiler
  - OpenGL ES 2
@@ -24,6 +25,7 @@ Shell commands:
     $ android update project -p .
     $ ndk-build
     $ ant debug install
+
 
 # TODO
 
