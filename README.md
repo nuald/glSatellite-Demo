@@ -1,3 +1,15 @@
+# Description
+
+Technological demo featuring various areas as using OpenGL ES with Android NDK, custom message queues, interacting JNI and Java activities, using NORAD databases and parsing their data.
+
+Features:
+ - Edit
+ - C++11 with clang compiler
+ - OpenGL ES 2
+ - Multitouch for scaling, rotating and moving
+ - NORAD TLE database
+ - SGP4/SDP4 orbital model
+
 # Installation instructions
 
 Shell commands:
@@ -18,15 +30,6 @@ Shell commands:
  - test offline mode
  - fix logging messages in Java
  - star.bmp -> png
-
-# Long term TODO
-
- - optimize beams to use minimum vertexes
- - add animation to beam lights
- - add legend for the beams
- - calculate quaternions in shaders
- - use own camera class to limit zoom in/out with momentum
- - rotate initial position to the longitude of the user location
 
 # References
 
