@@ -25,13 +25,6 @@ Shell commands:
     $ ndk-build
     $ ant debug install
 
-
-# TODO
-
- - test offline mode
- - fix logging messages in Java
- - star.bmp -> png
-
 # References
 
 The Official Khronos WebGL Repository: https://github.com/KhronosGroup/WebGL

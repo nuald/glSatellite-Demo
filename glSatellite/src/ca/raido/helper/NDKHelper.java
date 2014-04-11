@@ -36,7 +36,7 @@ public class NDKHelper {
     private static Context context;
 
     public static void setContext(Context c) {
-        Log.i("NDKHelper", "setContext:" + c);
+        Log.d(c.getPackageName(), "setContext: " + c);
         context = c;
     }
 
@@ -97,7 +97,7 @@ public class NDKHelper {
             // bitmap.getHeight(), matrix, true);
 
         } catch (Exception e) {
-            Log.w("NDKHelper", "Coundn't load a file:" + path);
+            Log.e(context.getPackageName(), "Couldn't load a file: " + path);
             return false;
         }
 
@@ -125,7 +125,7 @@ public class NDKHelper {
             }
 
         } catch (Exception e) {
-            Log.w("NDKHelper", "Coundn't load a file:" + path);
+            Log.e(context.getPackageName(), "Couldn't load a file: " + path);
         }
 
         return bitmap;
@@ -152,7 +152,8 @@ public class NDKHelper {
     public static String getNativeLibraryDirectory(Context appContext) {
         ApplicationInfo ai = context.getApplicationInfo();
 
-        Log.w("NDKHelper", "ai.nativeLibraryDir:" + ai.nativeLibraryDir);
+        Log.d(context.getPackageName(),
+                "ai.nativeLibraryDir: " + ai.nativeLibraryDir);
 
         if ((ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
                 || (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {

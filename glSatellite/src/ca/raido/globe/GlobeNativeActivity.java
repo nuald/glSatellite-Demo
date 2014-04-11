@@ -95,13 +95,13 @@ public class GlobeNativeActivity extends NativeActivity {
                 output.flush();
             }
         } catch (MalformedURLException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(getPackageName(), e.getMessage());
             return false;
         } catch (FileNotFoundException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(getPackageName(), e.getMessage());
             return false;
         } catch (IOException e) {
-            Log.e("Error: ", e.getMessage());
+            Log.e(getPackageName(), e.getMessage());
             return false;
         } finally {
             try {
@@ -112,7 +112,7 @@ public class GlobeNativeActivity extends NativeActivity {
                     input.close();
                 }
             } catch (IOException e) {
-                Log.e("Error: ", e.getMessage());
+                Log.e(getPackageName(), e.getMessage());
                 return false;
             } finally {
                 if (urlConnection != null) {

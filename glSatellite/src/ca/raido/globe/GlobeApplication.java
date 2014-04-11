@@ -12,6 +12,6 @@ public class GlobeApplication extends Application {
     public void onCreate() {
         context = getApplicationContext();
         NDKHelper.setContext(context);
-        Log.w("native-activity", "onCreate");
+        Log.d(context.getPackageName(), "onCreate called");
     }
 }
