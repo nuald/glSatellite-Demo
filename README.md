@@ -4,7 +4,6 @@ Technological demo featuring various areas as using OpenGL ES with Android NDK, 
 
 Features:
 
- - Edit
  - C++11 with clang compiler
  - OpenGL ES 2
  - Multitouch for scaling, rotating and moving
