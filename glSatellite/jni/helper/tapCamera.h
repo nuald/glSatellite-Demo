@@ -76,6 +76,8 @@ private:
 
     ndk_helper::Vec3 vec_pinch_transform_factor_;
 
+    bool stopping_;
+
     ndk_helper::Vec3 PointOnSphere(ndk_helper::Vec2& point);
     void BallUpdate();
     void InitParameters();
@@ -86,7 +88,8 @@ public:
     void EndDrag();
     void Drag( const ndk_helper::Vec2& vec );
     void Update();
-    void Stop();
+    void BeginStop();
+    void EndStop();
 
     ndk_helper::Mat4& GetRotationMatrix();
     ndk_helper::Mat4& GetTransformMatrix();

@@ -310,8 +310,11 @@ void GlobeRenderer::Update(float fTime) {
     zoom_in_enabled_ = cam_z < CAM_STOP_MAX;
     zoom_out_enabled_ = cam_z > CAM_STOP_MIN;
     if (!zoom_in_enabled_ || !zoom_out_enabled_) {
-        camera_->Stop();
+        camera_->BeginStop();
+    } else {
+        camera_->EndStop();
     }
+
     mat_view_ = mat_tranform * camera_->GetRotationMatrix() * mat_model_;
 }
 

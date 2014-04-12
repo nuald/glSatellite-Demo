@@ -49,7 +49,8 @@ TapCamera::TapCamera() :
                 camera_rotation_now_( 0.f ),
                 momentum_( false ),
                 momentum_steps_( 0.f ),
-                flip_z_( 0.f )
+                flip_z_( 0.f ),
+                stopping_(false)
 {
     //Init offset
     InitParameters();
@@ -137,11 +138,16 @@ void TapCamera::Update()
     mat_transform_ = Mat4::Translation( vec );
 }
 
-void TapCamera::Stop() {
+void TapCamera::BeginStop() {
     // Inverse direction and stop
-    if (momentum_) {
-        vec_offset_delta_ = -vec_offset_delta_ / 2;
+    if (momentum_ && !stopping_) {
+        vec_offset_delta_ = -vec_offset_delta_;
+        stopping_ = true;
     }
+}
+
+void TapCamera::EndStop() {
+    stopping_ = false;
 }
 
 Mat4& TapCamera::GetRotationMatrix()
