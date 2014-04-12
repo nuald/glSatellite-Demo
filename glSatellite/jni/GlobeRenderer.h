@@ -3,6 +3,7 @@
 #include "NDKHelper.h"
 #include "SatelliteMgr.h"
 #include "IFileReader.h"
+#include "helper/tapCamera.h"
 
 enum SHADER_ATTRIBUTES {
     ATTRIB_VERTEX, ATTRIB_NORMAL, ATTRIB_UV,
@@ -49,7 +50,7 @@ class GlobeRenderer {
     ndk_helper::Mat4 mat_projection_;
     ndk_helper::Mat4 mat_view_;
     ndk_helper::Mat4 mat_model_;
-    ndk_helper::TapCamera* camera_;
+    helper::TapCamera* camera_;
 
     ndk_helper::Vec3 Coord2Vec3(float latitude, float longitude);
 
@@ -68,7 +69,7 @@ public:
         Unload();
     }
 
-    void Bind(ndk_helper::TapCamera* camera) {
+    void Bind(helper::TapCamera* camera) {
         camera_ = camera;
     }
 
@@ -78,6 +79,7 @@ public:
     void Update(float dTime);
     void Unload();
     void UpdateViewport();
+    void RequestRead(const ndk_helper::Vec2& v);
     bool IsZoomInEnabled() { return zoom_in_enabled_; }
     bool IsZoomOutEnabled() { return zoom_out_enabled_; }
 };

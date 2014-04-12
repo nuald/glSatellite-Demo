@@ -311,9 +311,6 @@ public class GlobeNativeActivity extends NativeActivity {
                 AdView adView = (AdView)popupView.findViewById(R.id.adView);
                 AdRequest adRequest = new AdRequest.Builder()
                         .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        // TODO: remove later
-                        .addTestDevice("EF0BF8DA9DC3AA0A820FABFDD9D7DDE7")
-                        .addTestDevice("047DD68DA1D60BB013262F0247B49F2E")
                         .build();
                 adView.loadAd(adRequest);
             }

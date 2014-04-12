@@ -140,7 +140,7 @@ void GlobeRenderer::MakePoints(float radius, int number) {
         for (auto step = 0; step < STEP_NUM; ++step) {
             geometry_data[index++] = x + diff * geo_manip_x[step];
             geometry_data[index++] = y + diff * geo_manip_y[step];
-            geometry_data[index++] = -CAM_Z;
+            geometry_data[index++] = CAM_STOP_MIN;
             tex_data[ti++] = tex_manip_u[step];
             tex_data[ti++] = tex_manip_v[step];
         }
@@ -309,6 +309,9 @@ void GlobeRenderer::Update(float fTime) {
     float cam_z = mat_tranform.Ptr()[14];
     zoom_in_enabled_ = cam_z < CAM_STOP_MAX;
     zoom_out_enabled_ = cam_z > CAM_STOP_MIN;
+    if (!zoom_in_enabled_ || !zoom_out_enabled_) {
+        camera_->Stop();
+    }
     mat_view_ = mat_tranform * camera_->GetRotationMatrix() * mat_model_;
 }
 
@@ -527,4 +530,8 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
 void GlobeRenderer::InitSatelliteMgr(IFileReader& reader) {
     mgr_.Init(reader);
     MakeBeams();
+}
+
+void GlobeRenderer::RequestRead(const Vec2& v) {
+    // TODO: request object read
 }

@@ -4,7 +4,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := GlobeNativeActivity
 LOCAL_SRC_FILES := $(notdir $(wildcard $(LOCAL_PATH)/*.cpp))
-$(info $(LOCAL_SRC_FILES))
+LOCAL_SRC_FILES += helper/gestureDetector.cpp helper/tapCamera.cpp
+
 LOCAL_C_INCLUDES :=
 
 LOCAL_CFLAGS := -Wall

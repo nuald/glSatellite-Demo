@@ -98,11 +98,17 @@ int32_t Engine::HandleInput(android_app *app, AInputEvent *event) {
         auto doubleTapState = engine->doubletap_detector_.Detect(event);
         auto dragState = engine->drag_detector_.Detect(event);
         auto pinchState = engine->pinch_detector_.Detect(event);
+        auto tapState = engine->tap_detector_.Detect(event);
 
         //Double tap detector has a priority over other detectors
         if (doubleTapState == GESTURE_STATE_ACTION) {
-            //Detect double tap
+            // Detect double tap
             engine->tap_camera_.Reset(true);
+        } else if (tapState == GESTURE_STATE_ACTION) {
+            // Single tag is detected
+            Vec2 v;
+            engine->tap_detector_.GetPointer(v);
+            engine->renderer_.RequestRead(v);
         } else {
             //Handle drag state
             if (dragState & GESTURE_STATE_START) {
@@ -246,13 +252,14 @@ void Engine::SuspendSensors() {
 }
 
 //-------------------------------------------------------------------------
-//Misc
+// Misc
 //-------------------------------------------------------------------------
 void Engine::SetState(android_app *state) {
     app_ = state;
     doubletap_detector_.SetConfiguration(app_->config);
     drag_detector_.SetConfiguration(app_->config);
     pinch_detector_.SetConfiguration(app_->config);
+    tap_detector_.SetConfiguration(app_->config);
 }
 
 void Engine::TransformPosition(Vec2 &vec) {
