@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include "GlobeRenderer.h"
 #include "DebugUtils.h"
+#include "MessageQueue.h"
+
 
 using namespace ndk_helper;
 using namespace std;
@@ -22,8 +24,11 @@ const float INITIAL_LONGITUDE = 90;
 const float INITIAL_LATITUDE = 90;
 const float CAM_STOP_MIN = -1000;
 const float CAM_STOP_MAX = 500;
+// Debug mode for color picker
+const bool DEBUG_FBO = false;
 
-GlobeRenderer::GlobeRenderer(): zoom_in_enabled_(true), zoom_out_enabled_(true) {
+GlobeRenderer::GlobeRenderer(): zoom_in_enabled_(true),
+    zoom_out_enabled_(true), _read_requested(false) {
     for (size_t i = 0; i < MAX_BUFFERS; ++i) {
         buffer_[i] = 0;
     }
@@ -228,7 +233,7 @@ void GlobeRenderer::MakeBeams() {
     glBufferData(GL_ARRAY_BUFFER, num_uv * sizeof(float), tex_data.get(),
             GL_STATIC_DRAW);
 
-    unique_ptr<float[]> color_data(new float[num_colors]);
+    color_data_.reset(new float[num_colors]);
     index = 0;
 
     // WARNING: android NDK log2 implementation is wrong
@@ -244,17 +249,73 @@ void GlobeRenderer::MakeBeams() {
                 - second_tuple;
         unsigned color_b = ((i + 1) & third_tuple) >> (2 * tuple_size);
         for (int j = 0; j < plane_num; ++j) {
-            color_data[index + j * 3] = 1.f * color_r / first_tuple;
-            color_data[index + 1 + j * 3] = 1.f * color_g / first_tuple;
-            color_data[index + 2 + j * 3] = 1.f * color_b / first_tuple;
+            color_data_[index + j * 3] = 1.f * color_r / first_tuple;
+            color_data_[index + 1 + j * 3] = 1.f * color_g / first_tuple;
+            color_data_[index + 2 + j * 3] = 1.f * color_b / first_tuple;
         }
         index += plane_num * 3;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[BEAMS_COLOR]);
-    glBufferData(GL_ARRAY_BUFFER, num_colors * sizeof(float), color_data.get(),
+    glBufferData(GL_ARRAY_BUFFER, num_colors * sizeof(float), color_data_.get(),
             GL_STATIC_DRAW);
+}
 
+void GlobeRenderer::InitFBO() {
+    // create framebuffer
+    glGenFramebuffers(1, &fb_);
+    glBindFramebuffer (GL_FRAMEBUFFER, fb_);
+
+    int32_t viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    const int width = viewport[2], height = viewport[3];
+
+    // attach renderbuffer to fb so that depth-sorting works
+    GLuint rb = 0;
+    GLuint fb_tex = 0;
+    glGenRenderbuffers(1, &rb);
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(
+        GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height
+    );
+
+    // create texture to use for rendering second pass
+    glGenTextures(1, &fb_tex);
+    glBindTexture(GL_TEXTURE_2D, fb_tex);
+    // make the texture the same size as the viewport
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        NULL
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // // attach render buffer (depth) and texture (colour) to fb
+    glFramebufferRenderbuffer(
+        GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb
+    );
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_tex, 0
+    );
+
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status == GL_FRAMEBUFFER_COMPLETE) {
+        LOGI("Single FBO setup successfully.");
+    } else {
+        LOGI("Problem in setup FBO texture: %x.", status);
+    }
+
+    // bind default fb (number 0) so that we render normally next time
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GlobeRenderer::Init() {
@@ -265,6 +326,8 @@ void GlobeRenderer::Init() {
             "fragment_shader.fsh");
     LoadShaders(&shader_params_[BACKGROUND], "bg_vshader.vsh",
             "bg_fshader.fsh");
+    LoadShaders(&shader_params_[FBO], "bg_vshader.vsh",
+            "fbo_fshader.fsh");
 
     texture_ = JNIHelper::GetInstance()->LoadTexture("earth.png");
     star_texture_ = JNIHelper::GetInstance()->LoadTexture("star.png");
@@ -272,6 +335,7 @@ void GlobeRenderer::Init() {
     glGenBuffers(MAX_BUFFERS, buffer_);
     MakeSphere(30, 30);
     MakePoints(CAM_Z, 500);
+    InitFBO();
 
     UpdateViewport();
 
@@ -416,8 +480,8 @@ void GlobeRenderer::RenderBackground() {
     glDeleteBuffers(1, &vbo);
 }
 
-void GlobeRenderer::RenderBeams() {
-    SHADER_PARAMS bg_shader_param_ = shader_params_[BACKGROUND];
+void GlobeRenderer::RenderBeams(bool fbo = false) {
+    SHADER_PARAMS bg_shader_param_ = shader_params_[fbo ? FBO : BACKGROUND];
     glUseProgram(bg_shader_param_.program_);
 
     glActiveTexture (GL_TEXTURE0);
@@ -468,14 +532,58 @@ void GlobeRenderer::RenderBeams() {
     }
 }
 
-void GlobeRenderer::Render() {
-    RenderBackground();
-    RenderGlobe();
+void GlobeRenderer::BindAndClear(bool fbo = false) {
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo ? fb_ : 0);
+    glClearColor(0, 0, 0, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
-    glEnable (GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
-    RenderBeams();
-    glDisable(GL_BLEND);
+void GlobeRenderer::Render() {
+    // Render FBO
+    BindAndClear(true);
+    RenderBeams(true);
+
+    // Render scene
+    BindAndClear();
+    if (DEBUG_FBO) {
+        RenderBeams(true);
+    } else {
+        RenderBackground();
+        RenderGlobe();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        RenderBeams();
+        glDisable(GL_BLEND);
+    }
+
+    if (_read_requested) {
+        glBindFramebuffer(GL_FRAMEBUFFER, fb_);
+        float x, y;
+        _read_coord.Value(x, y);
+        unsigned char data[4] = {};
+        glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
+        int index = 0;
+        for (int i = 0; i < num_beams_; ++i) {
+            Satellite &sat = mgr_.GetSatellite(i);
+            int plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
+            bool found = true;
+            for (int j = 0; j < 3; ++j) {
+                found = found && fabs(255*color_data_[index + j] - data[j]) <= 1;
+            }
+            if (found) {
+                string name = sat.GetName();
+                char *c_name = new char[name.length() + 1];
+                strcpy(c_name, name.c_str());
+                Message msg = {SHOW_BEAM, c_name};
+                PostMessage(msg);
+                break;
+            }
+            index += plane_num * 3;
+        }
+        _read_requested = false;
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
 void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
@@ -536,5 +644,6 @@ void GlobeRenderer::InitSatelliteMgr(IFileReader& reader) {
 }
 
 void GlobeRenderer::RequestRead(const Vec2& v) {
-    // TODO: request object read
+    _read_coord = v;
+    _read_requested = true;
 }

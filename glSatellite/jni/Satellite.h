@@ -38,4 +38,5 @@ public:
     double GetLatitude();
     double GetLongitude();
     double GetAltitude();
+    std::string GetName() const { return name_; }
 };

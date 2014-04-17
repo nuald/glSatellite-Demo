@@ -2,6 +2,7 @@
 #include "DebugUtils.h"
 #include "Satellite.h"
 #include "FileReaderFactory.h"
+#include "MessageQueue.h"
 
 using namespace ndk_helper;
 
@@ -57,10 +58,6 @@ void Engine::DrawFrame() {
     }
     renderer_.Update(monitor_.GetCurrentTime());
 
-    // Just fill the screen with a color.
-    glClearColor(0, 0, 0, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     renderer_.Render();
 
     // Swap
@@ -108,7 +105,10 @@ int32_t Engine::HandleInput(android_app *app, AInputEvent *event) {
             // Single tag is detected
             Vec2 v;
             engine->tap_detector_.GetPointer(v);
-            engine->renderer_.RequestRead(v);
+            float x, y;
+            v.Value(x, y);
+            y = engine->gl_context_->GetScreenHeight() - y;
+            engine->renderer_.RequestRead(Vec2(x, y));
         } else {
             //Handle drag state
             if (dragState & GESTURE_STATE_START) {
@@ -325,9 +325,26 @@ void Engine::UseTle(char *path) {
     free(path);
 }
 
+void Engine::ShowBeam(char *name) {
+    JNIEnv *jni;
+    app_->activity->vm->AttachCurrentThread(&jni, nullptr);
+
+    //Default class retrieval
+    auto clazz = jni->GetObjectClass(app_->activity->clazz);
+    auto methodID = jni->GetMethodID(clazz, "showBeam",
+            "(Ljava/lang/String;)V");
+    jstring j_name = jni->NewStringUTF(name);
+    jni->CallVoidMethod(app_->activity->clazz, methodID, j_name);
+
+    app_->activity->vm->DetachCurrentThread();
+
+    free(name);
+}
+
 void Engine::HandleMessage(Message msg) {
     switch (msg.cmd) {
     case SHOW_ADS: ShowAds(); break;
     case USE_TLE: UseTle(reinterpret_cast<char*>(msg.payload)); break;
+    case SHOW_BEAM: ShowBeam(reinterpret_cast<char*>(msg.payload)); break;
     }
 }

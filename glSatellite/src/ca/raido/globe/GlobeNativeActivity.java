@@ -317,6 +317,10 @@ public class GlobeNativeActivity extends NativeActivity {
         });
     }
 
+    public void showBeam(String name) {
+        showToast(name);
+    }
+
     public void showToast(final CharSequence text) {
         this.runOnUiThread(new Runnable() {
             @Override

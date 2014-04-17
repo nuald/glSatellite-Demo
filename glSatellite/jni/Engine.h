@@ -6,8 +6,6 @@
 #include "helper/tapCamera.h"
 #include "NDKHelper.h"
 
-enum {SHOW_ADS, USE_TLE};
-
 class Engine {
     GlobeRenderer renderer_;
 
@@ -38,6 +36,7 @@ class Engine {
     void ShowError(const char *error);
     void ShowAds();
     void UseTle(char *path);
+    void ShowBeam(char *name);
     void TransformPosition(ndk_helper::Vec2 &vec);
 
 public:

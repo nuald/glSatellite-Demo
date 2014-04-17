@@ -23,7 +23,7 @@ enum BUFFERS {
 };
 
 enum SHADERS {
-    GLOBE, BACKGROUND, MAX_SHADERS
+    GLOBE, BACKGROUND, FBO, MAX_SHADERS
 };
 
 struct SHADER_PARAMS {
@@ -41,7 +41,10 @@ class GlobeRenderer {
     GLuint star_texture_;
     std::unique_ptr<int[]> planes_per_beam_;
     SatelliteMgr mgr_;
-    bool zoom_in_enabled_, zoom_out_enabled_;
+    bool zoom_in_enabled_, zoom_out_enabled_, _read_requested;
+    ndk_helper::Vec2 _read_coord;
+    std::unique_ptr<float[]> color_data_;
+    GLuint fb_;
 
     SHADER_PARAMS shader_params_[MAX_SHADERS];
     void LoadShaders(SHADER_PARAMS* params, const char* strVsh,
@@ -57,10 +60,12 @@ class GlobeRenderer {
     void MakeSphere(int lats, int longs);
     void MakePoints(float radius, int number);
     void MakeBeams();
+    void InitFBO();
+    void BindAndClear(bool fbo);
 
     void RenderGlobe();
     void RenderBackground();
-    void RenderBeams();
+    void RenderBeams(bool fbo);
 
 public:
     GlobeRenderer();
