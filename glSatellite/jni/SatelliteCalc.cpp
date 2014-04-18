@@ -167,7 +167,7 @@ static double ThetaG_JD(double jd) {
 }
 
 static void CalculateLatLonAlt(double time, vector_t &pos,
-        geodetic_t &geodetic) {
+    geodetic_t &geodetic) {
     // Procedure CalculateLatLonAlt will calculate the geodetic
     // position of an object given its ECI position pos and time.
     // It is intended to be used to determine the ground track of
@@ -217,15 +217,14 @@ SatelliteCalc::SatelliteCalc(const Satellite& satellite) {
     tle_revnum = satellite.orbitnum_;
 
     /* Clear all flags */
-    is_sdp4_ = epoch_restart = synchronous = resonance =
-        do_loop = lunar_terms_done = simple = sdp4_initialized =
-        sgp4_initialized = false;
+    is_sdp4_ = epoch_restart = synchronous = resonance = do_loop =
+        lunar_terms_done = simple = sdp4_initialized = sgp4_initialized = false;
     SelectEphemeris();
 }
 
 void SatelliteCalc::Calc(double daynum) {
     // Zero vector for initializations
-    vector_t zero_vector = { 0, 0, 0, 0 };
+    vector_t zero_vector = {0, 0, 0, 0};
 
     // Satellite position and velocity vectors
     vector_t vel = zero_vector;

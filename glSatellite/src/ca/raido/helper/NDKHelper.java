@@ -69,8 +69,7 @@ public class NDKHelper {
 
         // recreate the new Bitmap and set it back
         return Bitmap.createBitmap(bitmapToScale, 0, 0,
-                bitmapToScale.getWidth(), bitmapToScale.getHeight(), matrix,
-                true);
+            bitmapToScale.getWidth(), bitmapToScale.getHeight(), matrix, true);
     }
 
     public boolean loadTexture(String path) {
@@ -152,11 +151,11 @@ public class NDKHelper {
     public static String getNativeLibraryDirectory(Context appContext) {
         ApplicationInfo ai = context.getApplicationInfo();
 
-        Log.d(context.getPackageName(),
-                "ai.nativeLibraryDir: " + ai.nativeLibraryDir);
+        Log.d(context.getPackageName(), "ai.nativeLibraryDir: "
+            + ai.nativeLibraryDir);
 
         if ((ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
-                || (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
+            || (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
             return ai.nativeLibraryDir;
         }
         return "/system/lib/";

@@ -137,7 +137,7 @@ public class GlobeNativeActivity extends NativeActivity {
         url_ = prefs.getString(SettingsActivity.PREF_URL, "");
         if (url_.isEmpty()) {
             String tle = prefs.getString(SettingsActivity.PREF_TLE,
-                    DbPickerPreference.DEFAULT);
+                DbPickerPreference.DEFAULT);
             url_ = String.format(SettingsActivity.FMT, tle);
             prefs.edit().putString(SettingsActivity.PREF_URL, url_).commit();
         }
@@ -173,6 +173,7 @@ public class GlobeNativeActivity extends NativeActivity {
     }
 
     native void ShowAds();
+
     native void UseTle(String path);
 
     LinearLayout _mainLayout;
@@ -184,7 +185,7 @@ public class GlobeNativeActivity extends NativeActivity {
     private int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height",
-                "dimen", "android");
+            "dimen", "android");
         if (resourceId > 0) {
             result = getResources().getDimensionPixelSize(resourceId);
         }
@@ -219,7 +220,7 @@ public class GlobeNativeActivity extends NativeActivity {
 
                 // Show our UI over NativeActivity window
                 _popupWindow.showAtLocation(_mainLayout, Gravity.BOTTOM
-                        | Gravity.LEFT, 0, 0);
+                    | Gravity.LEFT, 0, 0);
 
                 _label = (TextView)popupView.findViewById(R.id.textViewFPS);
                 _progressBar = (ProgressBar)popupView
@@ -280,8 +281,8 @@ public class GlobeNativeActivity extends NativeActivity {
                     if (usedUrl_ == null) {
                         res = String.format(Locale.getDefault(), DFL, fps_);
                     } else {
-                        res = String.format(Locale.getDefault(), FMT, fps_, dt_,
-                            formatUrl(usedUrl_));
+                        res = String.format(Locale.getDefault(), FMT, fps_,
+                            dt_, formatUrl(usedUrl_));
                     }
                 } else {
                     res = label;
@@ -306,13 +307,12 @@ public class GlobeNativeActivity extends NativeActivity {
                 // Show our UI over NativeActivity window
                 int height = getStatusBarHeight();
                 _adsWindow.showAtLocation(_mainLayout, Gravity.NO_GRAVITY, 0,
-                        height);
+                    height);
 
                 // Look up the AdView as a resource and load a request.
                 AdView adView = (AdView)popupView.findViewById(R.id.adView);
-                AdRequest adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .build();
+                AdRequest adRequest = new AdRequest.Builder().addTestDevice(
+                    AdRequest.DEVICE_ID_EMULATOR).build();
                 adView.loadAd(adRequest);
             }
         });

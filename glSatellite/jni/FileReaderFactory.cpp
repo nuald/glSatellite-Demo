@@ -15,7 +15,7 @@ class SysFileReader: public IFileReader {
     ifstream fd_;
 public:
     SysFileReader(const string& path) :
-            fd_(path) {
+                fd_(path) {
     }
 
     virtual bool is_open() {
@@ -62,7 +62,7 @@ public:
 };
 
 unique_ptr<IFileReader> FileReaderFactory::Get(READER_TYPE type,
-        const string& path) {
+    const string& path) {
 
     switch (type) {
     case SYS:

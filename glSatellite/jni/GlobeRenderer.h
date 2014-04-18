@@ -41,14 +41,14 @@ class GlobeRenderer {
     GLuint star_texture_;
     std::unique_ptr<int[]> planes_per_beam_;
     SatelliteMgr mgr_;
-    bool zoom_in_enabled_, zoom_out_enabled_, _read_requested;
-    ndk_helper::Vec2 _read_coord;
+    bool zoom_in_enabled_, zoom_out_enabled_, read_requested_;
+    ndk_helper::Vec2 read_coord_;
     std::unique_ptr<float[]> color_data_;
     GLuint fb_;
 
     SHADER_PARAMS shader_params_[MAX_SHADERS];
     void LoadShaders(SHADER_PARAMS* params, const char* strVsh,
-            const char* strFsh);
+        const char* strFsh);
 
     ndk_helper::Mat4 mat_projection_;
     ndk_helper::Mat4 mat_view_;
@@ -85,8 +85,14 @@ public:
     void Unload();
     void UpdateViewport();
     void RequestRead(const ndk_helper::Vec2& v);
-    bool IsZoomInEnabled() { return zoom_in_enabled_; }
-    bool IsZoomOutEnabled() { return zoom_out_enabled_; }
-    Satellite &GetSatellite(int num) { return mgr_.GetSatellite(num); }
+    bool IsZoomInEnabled() {
+        return zoom_in_enabled_;
+    }
+    bool IsZoomOutEnabled() {
+        return zoom_out_enabled_;
+    }
+    Satellite &GetSatellite(int num) {
+        return mgr_.GetSatellite(num);
+    }
 };
 

@@ -17,7 +17,7 @@ static string SubString(const string &value, size_t start, size_t end) {
 
     string str = value.substr(start, end - start + 1);
     str.erase(remove_if(str.begin(), str.end(), ptr_fun<int, int>(isspace)),
-            str.end());
+        str.end());
     return str;
 }
 
@@ -25,14 +25,16 @@ static string SubString(const string &value, size_t start, size_t end) {
 static inline string RTrim(const string &s) {
     string result(s);
     result.erase(
-            find_if(result.rbegin(), result.rend(),
-                    not1(ptr_fun<int, int>(isspace))).base(), result.end());
+        find_if(result.rbegin(), result.rend(),
+            not1(ptr_fun<int, int>(isspace))).base(), result.end());
     return result;
 }
 
 Satellite::Satellite(const string& name, const string& line1,
-        const string& line2) :
-        name_(RTrim(name)), line1_(line1), line2_(line2) {
+    const string& line2) :
+            name_(RTrim(name)),
+            line1_(line1),
+            line2_(line2) {
     /* Updates data in TLE structure based on
      line1 and line2 stored in structure. */
 
@@ -65,8 +67,8 @@ double CurrentDaynum() {
 
     x = gettimeofday(&tptr, NULL);
 
-    usecs = 0.000001 * (double) tptr.tv_usec;
-    seconds = usecs + (double) tptr.tv_sec;
+    usecs = 0.000001 * (double)tptr.tv_usec;
+    seconds = usecs + (double)tptr.tv_sec;
 
     return ((seconds / 86400.0) - 3651.0);
 }

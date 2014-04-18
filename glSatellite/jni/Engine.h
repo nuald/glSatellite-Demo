@@ -44,15 +44,8 @@ public:
     static int32_t HandleInput(android_app *app, AInputEvent *event);
     void HandleMessage(Message msg);
 
-    Engine() :
-            initialized_resources_(false), has_focus_(false), no_error_(true),
-            zoom_distance_(0.f),
-            app_(nullptr), sensor_manager_(nullptr),
-            accelerometer_sensor_(nullptr), sensor_event_queue_(nullptr) {
-        gl_context_ = ndk_helper::GLContext::GetInstance();
-    }
-    ~Engine() {
-    }
+    Engine();
+    ~Engine();
 
     void TermDisplay() {
         gl_context_->Suspend();

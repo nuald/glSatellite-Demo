@@ -19,14 +19,14 @@ static char KepCheck(const string &line1, const string &line2) {
 
     /* Compute checksum for each line */
 
-    for (x = 0, sum1 = 0, sum2 = 0; x <= 67;
-            sum1 += val[(int) line1[x]], sum2 += val[(int) line2[x]], ++x)
+    for (x = 0, sum1 = 0, sum2 = 0; x <= 67; sum1 += val[(int)line1[x]], sum2 +=
+        val[(int)line2[x]], ++x)
         ;
 
     /* Perform a "torture test" on the data */
 
-    x = (val[(int) line1[68]] ^ (sum1 % 10))
-            | (val[(int) line2[68]] ^ (sum2 % 10)) | (line1[0] ^ '1')
+    x = (val[(int)line1[68]] ^ (sum1 % 10))
+            | (val[(int)line2[68]] ^ (sum2 % 10)) | (line1[0] ^ '1')
             | (line1[1] ^ ' ') | (line1[7] ^ 'U') | (line1[8] ^ ' ')
             | (line1[17] ^ ' ') | (line1[23] ^ '.') | (line1[32] ^ ' ')
             | (line1[34] ^ '.') | (line1[43] ^ ' ') | (line1[52] ^ ' ')

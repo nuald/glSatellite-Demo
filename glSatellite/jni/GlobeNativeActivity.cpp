@@ -72,7 +72,7 @@ void android_main(android_app *state) {
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
         while ((id = ALooper_pollAll(g_engine.IsReady() ? 0 : -1, nullptr,
-                &events, (void **) &source)) >= 0) {
+            &events, (void **)&source)) >= 0) {
             // Process this event.
             if (source) {
                 source->process(state, source);

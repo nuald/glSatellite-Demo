@@ -6,6 +6,20 @@
 
 using namespace ndk_helper;
 
+Engine::Engine() :
+            initialized_resources_(false),
+            has_focus_(false),
+            no_error_(true),
+            zoom_distance_(0.f),
+            app_(nullptr),
+            sensor_manager_(nullptr),
+            accelerometer_sensor_(nullptr),
+            sensor_event_queue_(nullptr) {
+    gl_context_ = ndk_helper::GLContext::GetInstance();
+}
+
+Engine::~Engine() {}
+
 void Engine::LoadResources() {
     renderer_.Init();
     renderer_.Bind(&tap_camera_);
@@ -41,7 +55,7 @@ void Engine::InitDisplay() {
 
     //Note that screen size might have been changed
     glViewport(0, 0, gl_context_->GetScreenWidth(),
-            gl_context_->GetScreenHeight());
+        gl_context_->GetScreenHeight());
     renderer_.UpdateViewport();
 
     tap_camera_.SetFlip(1.f, -1.f, -1.f);
@@ -88,7 +102,7 @@ bool Engine::IsZoomEnabled(Vec2 v1, Vec2 v2) {
  * Process the next input event.
  */
 int32_t Engine::HandleInput(android_app *app, AInputEvent *event) {
-    auto engine = (Engine*) app->userData;
+    auto engine = (Engine*)app->userData;
     if (engine->no_error_
             && AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 
@@ -170,7 +184,7 @@ void Engine::InitWindow() {
  * Process the next main command.
  */
 void Engine::HandleCmd(android_app *app, int32_t cmd) {
-    auto engine = (Engine*) app->userData;
+    auto engine = (Engine*)app->userData;
     switch (cmd) {
     case APP_CMD_SAVE_STATE:
         break;
@@ -213,9 +227,9 @@ void Engine::HandleCmd(android_app *app, int32_t cmd) {
 void Engine::InitSensors() {
     sensor_manager_ = ASensorManager_getInstance();
     accelerometer_sensor_ = ASensorManager_getDefaultSensor(sensor_manager_,
-            ASENSOR_TYPE_ACCELEROMETER);
+        ASENSOR_TYPE_ACCELEROMETER);
     sensor_event_queue_ = ASensorManager_createEventQueue(sensor_manager_,
-            app_->looper, LOOPER_ID_USER, nullptr, nullptr);
+        app_->looper, LOOPER_ID_USER, nullptr, nullptr);
 }
 
 void Engine::ProcessSensors(int32_t id) {
@@ -235,10 +249,10 @@ void Engine::ResumeSensors() {
     // When our app gains focus, we start monitoring the accelerometer.
     if (accelerometer_sensor_) {
         ASensorEventQueue_enableSensor(sensor_event_queue_,
-                accelerometer_sensor_);
+            accelerometer_sensor_);
         // We'd like to get 60 events per second (in us).
         ASensorEventQueue_setEventRate(sensor_event_queue_,
-                accelerometer_sensor_, (1000L / 60) * 1000);
+            accelerometer_sensor_, (1000L / 60) * 1000);
     }
 }
 
@@ -247,7 +261,7 @@ void Engine::SuspendSensors() {
     // This is to avoid consuming battery while not being used.
     if (accelerometer_sensor_) {
         ASensorEventQueue_disableSensor(sensor_event_queue_,
-                accelerometer_sensor_);
+            accelerometer_sensor_);
     }
 }
 
@@ -265,7 +279,7 @@ void Engine::SetState(android_app *state) {
 void Engine::TransformPosition(Vec2 &vec) {
     vec = Vec2(2.0f, 2.0f) * vec
             / Vec2(gl_context_->GetScreenWidth(),
-                    gl_context_->GetScreenHeight()) - Vec2(1.f, 1.f);
+                gl_context_->GetScreenHeight()) - Vec2(1.f, 1.f);
 }
 
 void Engine::ShowUI() {
@@ -287,7 +301,7 @@ void Engine::ShowError(const char *error) {
     //Default class retrieval
     auto clazz = jni->GetObjectClass(app_->activity->clazz);
     auto methodID = jni->GetMethodID(clazz, "updateLabel",
-            "(Ljava/lang/String;)V");
+        "(Ljava/lang/String;)V");
     jstring label = jni->NewStringUTF(error);
     jni->CallVoidMethod(app_->activity->clazz, methodID, label);
 
@@ -332,19 +346,25 @@ void Engine::ShowBeam(int num) {
     //Default class retrieval
     auto clazz = jni->GetObjectClass(app_->activity->clazz);
     auto methodID = jni->GetMethodID(clazz, "showBeam",
-            "(Ljava/lang/String;FFF)V");
+        "(Ljava/lang/String;FFF)V");
     Satellite &sat = renderer_.GetSatellite(num);
     jstring j_name = jni->NewStringUTF(sat.GetName().c_str());
     jni->CallVoidMethod(app_->activity->clazz, methodID, j_name,
-       sat.GetLatitude(), sat.GetLongitude(), sat.GetAltitude());
+        sat.GetLatitude(), sat.GetLongitude(), sat.GetAltitude());
 
     app_->activity->vm->DetachCurrentThread();
 }
 
 void Engine::HandleMessage(Message msg) {
     switch (msg.cmd) {
-    case SHOW_ADS: ShowAds(); break;
-    case USE_TLE: UseTle(reinterpret_cast<char*>(msg.payload)); break;
-    case SHOW_BEAM: ShowBeam(reinterpret_cast<int>(msg.payload)); break;
+    case SHOW_ADS:
+        ShowAds();
+        break;
+    case USE_TLE:
+        UseTle(reinterpret_cast<char*>(msg.payload));
+        break;
+    case SHOW_BEAM:
+        ShowBeam(reinterpret_cast<int>(msg.payload));
+        break;
     }
 }

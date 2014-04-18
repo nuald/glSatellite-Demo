@@ -3,7 +3,6 @@
 #include "DebugUtils.h"
 #include "MessageQueue.h"
 
-
 using namespace ndk_helper;
 using namespace std;
 
@@ -27,8 +26,10 @@ const float CAM_STOP_MAX = 500;
 // Debug mode for color picker
 const bool DEBUG_FBO = false;
 
-GlobeRenderer::GlobeRenderer(): zoom_in_enabled_(true),
-    zoom_out_enabled_(true), _read_requested(false) {
+GlobeRenderer::GlobeRenderer() :
+            zoom_in_enabled_(true),
+            zoom_out_enabled_(true),
+            read_requested_(false) {
     for (size_t i = 0; i < MAX_BUFFERS; ++i) {
         buffer_[i] = 0;
     }
@@ -109,19 +110,19 @@ void GlobeRenderer::MakeSphere(int lats, int longs) {
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[NORMALS]);
     glBufferData(GL_ARRAY_BUFFER, num_normals * sizeof(float),
-            normal_data.get(), GL_STATIC_DRAW);
+        normal_data.get(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[GEOMETRY]);
     glBufferData(GL_ARRAY_BUFFER, num_geometry * sizeof(float),
-            geometry_data.get(), GL_STATIC_DRAW);
+        geometry_data.get(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[TEXCOORDS]);
     glBufferData(GL_ARRAY_BUFFER, num_texcoords * sizeof(float),
-            texcoord_data.get(), GL_STATIC_DRAW);
+        texcoord_data.get(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_[INDICES]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * num_indices_,
-            index_data.get(), GL_STATIC_DRAW);
+        index_data.get(), GL_STATIC_DRAW);
 }
 
 void GlobeRenderer::MakePoints(float radius, int number) {
@@ -132,10 +133,10 @@ void GlobeRenderer::MakePoints(float radius, int number) {
     unique_ptr<float[]> tex_data(new float[num_uv]);
     auto index = 0, ti = 0;
     const int STEP_NUM = 4;
-    int geo_manip_x[STEP_NUM] = { 1, 1, -1, -1 };
-    int geo_manip_y[STEP_NUM] = { 1, -1, 1, -1 };
-    int tex_manip_u[STEP_NUM] = { 1, 1, 0, 0 };
-    int tex_manip_v[STEP_NUM] = { 1, 0, 1, 0 };
+    int geo_manip_x[STEP_NUM] = {1, 1, -1, -1};
+    int geo_manip_y[STEP_NUM] = {1, -1, 1, -1};
+    int tex_manip_u[STEP_NUM] = {1, 1, 0, 0};
+    int tex_manip_v[STEP_NUM] = {1, 0, 1, 0};
 
     for (int i = 0; i < number; ++i) {
         auto x = radius * (1.f - 2.f * random() / RAND_MAX);
@@ -153,11 +154,11 @@ void GlobeRenderer::MakePoints(float radius, int number) {
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[POINTS]);
     glBufferData(GL_ARRAY_BUFFER, num_geometry * sizeof(float),
-            geometry_data.get(), GL_STATIC_DRAW);
+        geometry_data.get(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[PTS_TEX]);
     glBufferData(GL_ARRAY_BUFFER, num_uv * sizeof(float), tex_data.get(),
-            GL_STATIC_DRAW);
+        GL_STATIC_DRAW);
 }
 
 void GlobeRenderer::MakeBeams() {
@@ -195,10 +196,10 @@ void GlobeRenderer::MakeBeams() {
     unique_ptr<float[]> tex_data(new float[num_uv]);
     auto index = 0, ti = 0;
     const int STEP_NUM = 4;
-    int geo_manip_x[STEP_NUM] = { 1, 1, -1, -1 };
-    int geo_manip_y[STEP_NUM] = { 1, -1, 1, -1 };
-    int tex_manip_u[STEP_NUM] = { 1, 1, 0, 0 };
-    int tex_manip_v[STEP_NUM] = { 1, 0, 1, 0 };
+    int geo_manip_x[STEP_NUM] = {1, 1, -1, -1};
+    int geo_manip_y[STEP_NUM] = {1, -1, 1, -1};
+    int tex_manip_u[STEP_NUM] = {1, 1, 0, 0};
+    int tex_manip_v[STEP_NUM] = {1, 0, 1, 0};
 
     for (size_t i = 0; i < num_beams_; ++i) {
         float latitude = INITIAL_LATITUDE;
@@ -211,7 +212,7 @@ void GlobeRenderer::MakeBeams() {
             for (int step = 0; step < STEP_NUM; ++step) {
                 int _step = step;
                 Vec3 coord = Coord2Vec3(latitude + width * geo_manip_y[_step],
-                        longitude + width * geo_manip_x[_step]);
+                    longitude + width * geo_manip_x[_step]);
                 coord *= (GLOBE_RADIUS + 0.5 + BEAM_PLANE_DIFF * j);
                 coord.Value(x, y, z);
 
@@ -227,11 +228,11 @@ void GlobeRenderer::MakeBeams() {
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[BEAMS]);
     glBufferData(GL_ARRAY_BUFFER, num_geometry * sizeof(float),
-            geometry_data.get(), GL_STATIC_DRAW);
+        geometry_data.get(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[BEAMS_TEX]);
     glBufferData(GL_ARRAY_BUFFER, num_uv * sizeof(float), tex_data.get(),
-            GL_STATIC_DRAW);
+        GL_STATIC_DRAW);
 
     color_data_.reset(new float[num_colors]);
     index = 0;
@@ -258,13 +259,13 @@ void GlobeRenderer::MakeBeams() {
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer_[BEAMS_COLOR]);
     glBufferData(GL_ARRAY_BUFFER, num_colors * sizeof(float), color_data_.get(),
-            GL_STATIC_DRAW);
+        GL_STATIC_DRAW);
 }
 
 void GlobeRenderer::InitFBO() {
     // create framebuffer
     glGenFramebuffers(1, &fb_);
-    glBindFramebuffer (GL_FRAMEBUFFER, fb_);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb_);
 
     int32_t viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -275,37 +276,24 @@ void GlobeRenderer::InitFBO() {
     GLuint fb_tex = 0;
     glGenRenderbuffers(1, &rb);
     glBindRenderbuffer(GL_RENDERBUFFER, rb);
-    glRenderbufferStorage(
-        GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height
-    );
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
 
     // create texture to use for rendering second pass
     glGenTextures(1, &fb_tex);
     glBindTexture(GL_TEXTURE_2D, fb_tex);
     // make the texture the same size as the viewport
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,
-        width,
-        height,
-        0,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        NULL
-    );
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+        GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // // attach render buffer (depth) and texture (colour) to fb
-    glFramebufferRenderbuffer(
-        GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb
-    );
-    glFramebufferTexture2D(
-        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_tex, 0
-    );
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+        GL_RENDERBUFFER, rb);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+        fb_tex, 0);
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status == GL_FRAMEBUFFER_COMPLETE) {
@@ -320,14 +308,13 @@ void GlobeRenderer::InitFBO() {
 
 void GlobeRenderer::Init() {
     //Settings
-    glFrontFace(GL_CW);
+    glFrontFace (GL_CW);
 
     LoadShaders(&shader_params_[GLOBE], "vertex_shader.vsh",
-            "fragment_shader.fsh");
+        "fragment_shader.fsh");
     LoadShaders(&shader_params_[BACKGROUND], "bg_vshader.vsh",
-            "bg_fshader.fsh");
-    LoadShaders(&shader_params_[FBO], "bg_vshader.vsh",
-            "fbo_fshader.fsh");
+        "bg_fshader.fsh");
+    LoadShaders(&shader_params_[FBO], "bg_vshader.vsh", "fbo_fshader.fsh");
 
     texture_ = JNIHelper::GetInstance()->LoadTexture("earth.png");
     star_texture_ = JNIHelper::GetInstance()->LoadTexture("star.png");
@@ -345,11 +332,11 @@ void GlobeRenderer::Init() {
 void GlobeRenderer::UpdateViewport() {
     int32_t viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    auto ratio = (float) viewport[2] / (float) viewport[3];
+    auto ratio = (float)viewport[2] / (float)viewport[3];
 
     mat_projection_ = Mat4::Perspective(ratio, 1.0f, CAM_NEAR, CAM_FAR);
     Mat4 mat_look = Mat4::LookAt(Vec3(CAM_X, CAM_Y, CAM_Z), Vec3(0.f, 0.f, 0.f),
-            Vec3(0.f, 1.f, 0.f));
+        Vec3(0.f, 1.f, 0.f));
 
     mat_projection_ = mat_projection_ * mat_look;
 }
@@ -411,13 +398,13 @@ void GlobeRenderer::RenderGlobe() {
     glUseProgram(shader_param_.program_);
 
     glUniformMatrix4fv(shader_param_.matrix_projection_, 1, GL_FALSE,
-            mat_vp.Ptr());
+        mat_vp.Ptr());
 
     auto mat_normal = mat_view_;
     mat_normal.Inverse();
     mat_normal.Transpose();
     glUniformMatrix4fv(shader_param_.matrix_normal_, 1, GL_FALSE,
-            mat_normal.Ptr());
+        mat_normal.Ptr());
 
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_);
@@ -435,7 +422,7 @@ void GlobeRenderer::RenderBackground() {
 
     ndk_helper::Mat4 mat_fixed = mat_projection_ * mat_model_;
     glUniformMatrix4fv(bg_shader_param_.matrix_projection_, 1, GL_FALSE,
-            mat_fixed.Ptr());
+        mat_fixed.Ptr());
 
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, star_texture_);
@@ -469,7 +456,7 @@ void GlobeRenderer::RenderBackground() {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, num_points_ * 3 * sizeof(float),
-            color_data.get(), GL_STATIC_DRAW);
+        color_data.get(), GL_STATIC_DRAW);
     glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(ATTRIB_NORMAL);
 
@@ -551,16 +538,16 @@ void GlobeRenderer::Render() {
         RenderBackground();
         RenderGlobe();
 
-        glEnable(GL_BLEND);
+        glEnable (GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         RenderBeams();
         glDisable(GL_BLEND);
     }
 
-    if (_read_requested) {
+    if (read_requested_) {
         glBindFramebuffer(GL_FRAMEBUFFER, fb_);
         float x, y;
-        _read_coord.Value(x, y);
+        read_coord_.Value(x, y);
         unsigned char data[4] = {};
         glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
         int index = 0;
@@ -568,7 +555,8 @@ void GlobeRenderer::Render() {
             int plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
             bool found = true;
             for (int j = 0; j < 3; ++j) {
-                found = found && fabs(255*color_data_[index + j] - data[j]) <= 1;
+                found = found
+                        && fabs(255 * color_data_[index + j] - data[j]) <= 1;
             }
             if (found) {
                 Message msg = {SHOW_BEAM, reinterpret_cast<void*>(i)};
@@ -577,13 +565,13 @@ void GlobeRenderer::Render() {
             }
             index += plane_num * 3;
         }
-        _read_requested = false;
+        read_requested_ = false;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
 
 void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
-        const char *strFsh) {
+    const char *strFsh) {
     // Create shader program
     auto program = glCreateProgram();
     LOGI("Created Shader %d", program);
@@ -595,7 +583,7 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
             if (!shader::CompileShader(&shader, shader_type, path)) {
                 glDeleteProgram(program);
                 throw RuntimeError(AT, "Failed to compile shader from %s",
-                        path);
+                    path);
             }
             glAttachShader(program, shader);
         }
@@ -627,7 +615,7 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
 
     // Get uniform locations
     params->matrix_projection_ = glGetUniformLocation(program,
-            "u_modelViewProjMatrix");
+        "u_modelViewProjMatrix");
     params->matrix_normal_ = glGetUniformLocation(program, "u_normalMatrix");
     params->tex_ = glGetUniformLocation(program, "tex0");
 
@@ -640,6 +628,6 @@ void GlobeRenderer::InitSatelliteMgr(IFileReader& reader) {
 }
 
 void GlobeRenderer::RequestRead(const Vec2& v) {
-    _read_coord = v;
-    _read_requested = true;
+    read_coord_ = v;
+    read_requested_ = true;
 }

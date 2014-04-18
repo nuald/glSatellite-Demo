@@ -67,7 +67,7 @@ int MessageQueue::AddMessageQueue(android_poll_source *src) {
     /* Register the file descriptor to listen on. */
     int msgread = entry.message_pipe_[0];
     ALooper_addFd(looper_, msgread, current_id_, ALOOPER_EVENT_INPUT, nullptr,
-            src);
+        src);
     // Increment id right before the insert
     entries_.insert(pair<int, MessageQueueEntry>(current_id_, entry));
     return msgread;

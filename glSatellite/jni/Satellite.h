@@ -32,11 +32,13 @@ class Satellite {
     double sat_lat, sat_lon, sat_alt;
 public:
     Satellite(const std::string& name, const std::string& line1,
-            const std::string& line2);
+        const std::string& line2);
 
     void UpdatePosition();
     double GetLatitude();
     double GetLongitude();
     double GetAltitude();
-    std::string GetName() const { return name_; }
+    std::string GetName() const {
+        return name_;
+    }
 };

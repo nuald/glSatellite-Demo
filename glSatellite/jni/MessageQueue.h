@@ -3,7 +3,9 @@
 #include <map>
 
 // Message commands
-enum {SHOW_ADS, USE_TLE, SHOW_BEAM};
+enum {
+    SHOW_ADS, USE_TLE, SHOW_BEAM
+};
 
 struct Message {
     int cmd;
@@ -28,7 +30,7 @@ class MessageQueue {
     static int current_id_;
 public:
     MessageQueue() :
-            looper_(nullptr) {
+                looper_(nullptr) {
     }
     int AddMessageQueue(android_poll_source *src);
     void PostMessage(int queue_id, Message msg);
