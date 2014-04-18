@@ -87,5 +87,6 @@ public:
     void RequestRead(const ndk_helper::Vec2& v);
     bool IsZoomInEnabled() { return zoom_in_enabled_; }
     bool IsZoomOutEnabled() { return zoom_out_enabled_; }
+    Satellite &GetSatellite(int num) { return mgr_.GetSatellite(num); }
 };
 

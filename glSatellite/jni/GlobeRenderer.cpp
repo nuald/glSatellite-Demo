@@ -565,17 +565,13 @@ void GlobeRenderer::Render() {
         glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
         int index = 0;
         for (int i = 0; i < num_beams_; ++i) {
-            Satellite &sat = mgr_.GetSatellite(i);
             int plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
             bool found = true;
             for (int j = 0; j < 3; ++j) {
                 found = found && fabs(255*color_data_[index + j] - data[j]) <= 1;
             }
             if (found) {
-                string name = sat.GetName();
-                char *c_name = new char[name.length() + 1];
-                strcpy(c_name, name.c_str());
-                Message msg = {SHOW_BEAM, c_name};
+                Message msg = {SHOW_BEAM, reinterpret_cast<void*>(i)};
                 PostMessage(msg);
                 break;
             }

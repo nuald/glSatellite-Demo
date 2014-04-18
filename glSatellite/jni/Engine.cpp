@@ -325,26 +325,26 @@ void Engine::UseTle(char *path) {
     free(path);
 }
 
-void Engine::ShowBeam(char *name) {
+void Engine::ShowBeam(int num) {
     JNIEnv *jni;
     app_->activity->vm->AttachCurrentThread(&jni, nullptr);
 
     //Default class retrieval
     auto clazz = jni->GetObjectClass(app_->activity->clazz);
     auto methodID = jni->GetMethodID(clazz, "showBeam",
-            "(Ljava/lang/String;)V");
-    jstring j_name = jni->NewStringUTF(name);
-    jni->CallVoidMethod(app_->activity->clazz, methodID, j_name);
+            "(Ljava/lang/String;FFF)V");
+    Satellite &sat = renderer_.GetSatellite(num);
+    jstring j_name = jni->NewStringUTF(sat.GetName().c_str());
+    jni->CallVoidMethod(app_->activity->clazz, methodID, j_name,
+       sat.GetLatitude(), sat.GetLongitude(), sat.GetAltitude());
 
     app_->activity->vm->DetachCurrentThread();
-
-    free(name);
 }
 
 void Engine::HandleMessage(Message msg) {
     switch (msg.cmd) {
     case SHOW_ADS: ShowAds(); break;
     case USE_TLE: UseTle(reinterpret_cast<char*>(msg.payload)); break;
-    case SHOW_BEAM: ShowBeam(reinterpret_cast<char*>(msg.payload)); break;
+    case SHOW_BEAM: ShowBeam(reinterpret_cast<int>(msg.payload)); break;
     }
 }

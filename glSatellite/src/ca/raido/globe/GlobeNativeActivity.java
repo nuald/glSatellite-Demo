@@ -39,6 +39,7 @@ public class GlobeNativeActivity extends NativeActivity {
     static final String FMT = "FPS: %2.2f DT: %tF TLE: %s";
     static final String FAIL = "Downloading failed for %s";
     static final String DFL = "FPS: %2.2f Offline Iridium TLE";
+    static final String BMF = "%s LAT: %f LON: %f ALT: %f";
     String url_;
     String usedUrl_;
     float fps_;
@@ -317,8 +318,9 @@ public class GlobeNativeActivity extends NativeActivity {
         });
     }
 
-    public void showBeam(String name) {
-        showToast(name);
+    public void showBeam(String name, float lat, float lon, float alt) {
+        String msg = String.format(BMF, name, lat, lon, alt);
+        showToast(msg);
     }
 
     public void showToast(final CharSequence text) {
@@ -326,7 +328,7 @@ public class GlobeNativeActivity extends NativeActivity {
             @Override
             public void run() {
                 Context context = getApplicationContext();
-                int duration = Toast.LENGTH_SHORT;
+                int duration = Toast.LENGTH_LONG;
 
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
