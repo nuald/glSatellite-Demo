@@ -3,7 +3,10 @@ glSatellite/bin/*
 glSatellite/obj/*
 glSatellite/gen/*
 glSatellite/libs/*
+glSatellite/.classpath
 google-play-services_lib/bin/*
 google-play-services_lib/gen/*
+google-play-services_lib/.classpath
 v7-appcompat_lib/bin/*
-v7-appcompat_lib/gen/*
+google-play-services_libgen/*
+google-play-services_lib/.classpath
