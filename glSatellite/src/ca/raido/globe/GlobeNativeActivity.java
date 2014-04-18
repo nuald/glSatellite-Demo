@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.app.NativeActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -30,7 +31,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -143,6 +144,7 @@ public class GlobeNativeActivity extends NativeActivity {
         }
 
         new Thread(new Runnable() {
+            @Override
             public void run() {
                 if (!downloadFile()) {
                     showToast(String.format(FAIL, url_));
@@ -210,11 +212,13 @@ public class GlobeNativeActivity extends NativeActivity {
             public void run() {
                 View popupView = inflateView(R.layout.widgets);
                 _popupWindow = new PopupWindow(popupView,
-                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 _mainLayout = new LinearLayout(activity);
                 MarginLayoutParams params = new MarginLayoutParams(
-                        LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(0, 0, 0, 0);
                 activity.setContentView(_mainLayout, params);
 
@@ -302,7 +306,8 @@ public class GlobeNativeActivity extends NativeActivity {
             public void run() {
                 View popupView = inflateView(R.layout.ads);
                 _adsWindow = new PopupWindow(popupView,
-                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 // Show our UI over NativeActivity window
                 int height = getStatusBarHeight();

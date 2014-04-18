@@ -34,6 +34,7 @@ public class DbPickerPreference extends DialogPreference implements
         return view;
     }
 
+    @Override
     public void onCheckedChanged(RadioGroup rGroup, int checkedId) {
         RadioButton checkedRadioButton = (RadioButton)rGroup
                 .findViewById(checkedId);
