@@ -17,6 +17,7 @@ import android.app.NativeActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.view.WindowManager.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -37,10 +37,6 @@ import com.google.android.gms.ads.AdView;
 
 public class GlobeNativeActivity extends NativeActivity {
 
-    static final String FMT = "FPS: %2.2f DT: %tF TLE: %s";
-    static final String FAIL = "Downloading failed for %s";
-    static final String DFL = "FPS: %2.2f Offline Iridium TLE";
-    static final String BMF = "%s LAT: %f LON: %f ALT: %f";
     String url_;
     String usedUrl_;
     float fps_;
@@ -54,6 +50,12 @@ public class GlobeNativeActivity extends NativeActivity {
                     _progressBar.setProgress(progress);
                 }
             });
+        }
+    }
+
+    private void logException(Exception e) {
+        if (GlobeApplication.DEVELOPER_MODE) {
+            Log.e(getPackageName(), e.getMessage());
         }
     }
 
@@ -75,7 +77,7 @@ public class GlobeNativeActivity extends NativeActivity {
             etag = etag.replaceAll("[\":/\\\\]", "");
             dt = urlConnection.getHeaderFieldDate("Last-Modified", 0);
             File file = new File(getExternalFilesDir(null), etag);
-            // Etag is unique, if file exists do not download
+            // Etag is unique, hence if file exists do not download
             if (!file.exists()) {
                 // Download the file
                 input = new BufferedInputStream(urlConnection.getInputStream());
@@ -97,13 +99,13 @@ public class GlobeNativeActivity extends NativeActivity {
                 output.flush();
             }
         } catch (MalformedURLException e) {
-            Log.e(getPackageName(), e.getMessage());
+            logException(e);
             return false;
         } catch (FileNotFoundException e) {
-            Log.e(getPackageName(), e.getMessage());
+            logException(e);
             return false;
         } catch (IOException e) {
-            Log.e(getPackageName(), e.getMessage());
+            logException(e);
             return false;
         } finally {
             try {
@@ -114,7 +116,7 @@ public class GlobeNativeActivity extends NativeActivity {
                     input.close();
                 }
             } catch (IOException e) {
-                Log.e(getPackageName(), e.getMessage());
+                logException(e);
                 return false;
             } finally {
                 if (urlConnection != null) {
@@ -147,7 +149,8 @@ public class GlobeNativeActivity extends NativeActivity {
             @Override
             public void run() {
                 if (!downloadFile()) {
-                    showToast(String.format(FAIL, url_));
+                    Resources res = getResources();
+                    showToast(String.format(res.getString(R.string.FAIL), url_));
                 }
             }
         }).start();
@@ -280,18 +283,21 @@ public class GlobeNativeActivity extends NativeActivity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String res = null;
+                Resources res = getResources();
+                String result = null;
                 if (label == null) {
                     if (usedUrl_ == null) {
-                        res = String.format(Locale.getDefault(), DFL, fps_);
+                        result = String.format(Locale.getDefault(),
+                            res.getString(R.string.DFL), fps_);
                     } else {
-                        res = String.format(Locale.getDefault(), FMT, fps_,
-                            dt_, formatUrl(usedUrl_));
+                        result = String.format(Locale.getDefault(),
+                            res.getString(R.string.FMT), fps_, dt_,
+                            formatUrl(usedUrl_));
                     }
                 } else {
-                    res = label;
+                    result = label;
                 }
-                _label.setText(res);
+                _label.setText(result);
             }
         });
     }
@@ -324,7 +330,9 @@ public class GlobeNativeActivity extends NativeActivity {
     }
 
     public void showBeam(String name, float lat, float lon, float alt) {
-        String msg = String.format(BMF, name, lat, lon, alt);
+        Resources res = getResources();
+        String msg = String.format(res.getString(R.string.BMF), name, lat, lon,
+            alt);
         showToast(msg);
     }
 

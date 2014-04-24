@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">glSatellite Demo</string>
     <string name="settings">Settings</string>
+    <string name="FMT">FPS: %1$2.2f DT: %2$tF TLE: %3$s</string>
+    <string name="FAIL">Downloading failed for %1$s</string>
+    <string name="DFL">FPS: %1$2.2f Offline Iridium TLE</string>
+    <string name="BMF">%1$s LAT: %2$f LON: %3$f ALT: %4$f</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_title_db">Satellites</string>
