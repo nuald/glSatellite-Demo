@@ -25,8 +25,7 @@
 
 using namespace ndk_helper;
 
-namespace helper
-{
+namespace helper {
 
 const float TRANSFORM_FACTOR = 15.f;
 const float TRANSFORM_FACTORZ = 10.f;
@@ -40,45 +39,43 @@ const float MOMENTUM_FACTOR_THRESHOLD = 0.001f;
 //  Ctor
 //----------------------------------------------------------
 TapCamera::TapCamera() :
-                ball_radius_( 0.75f ),
-                dragging_( false ),
-                pinching_( false ),
-                pinch_start_distance_SQ_( 0.f ),
-                camera_rotation_( 0.f ),
-                camera_rotation_start_( 0.f ),
-                camera_rotation_now_( 0.f ),
-                momentum_( false ),
-                momentum_steps_( 0.f ),
-                flip_z_( 0.f ),
-                stopping_(false)
-{
+            ball_radius_(0.75f),
+            dragging_(false),
+            pinching_(false),
+            pinch_start_distance_SQ_(0.f),
+            camera_rotation_(0.f),
+            camera_rotation_start_(0.f),
+            camera_rotation_now_(0.f),
+            momentum_(false),
+            momentum_steps_(0.f),
+            flip_z_(0.f),
+            stopping_(false) {
     //Init offset
     InitParameters();
 
-    vec_flip_ = Vec2( 1.f, -1.f );
+    vec_flip_ = Vec2(1.f, -1.f);
     flip_z_ = -1.f;
-    vec_pinch_transform_factor_ = Vec3( 1.f, 1.f, 1.f );
+    vec_pinch_transform_factor_ = Vec3(1.f, 1.f, 1.f);
 
-    vec_ball_center_ = Vec2( 0, 0 );
-    vec_ball_now_ = Vec2( 0, 0 );
-    vec_ball_down_ = Vec2( 0, 0 );
+    vec_ball_center_ = Vec2(0, 0);
+    vec_ball_now_ = Vec2(0, 0);
+    vec_ball_down_ = Vec2(0, 0);
 
-    vec_pinch_start_ = Vec2( 0, 0 );
-    vec_pinch_start_center_ = Vec2( 0, 0 );
+    vec_pinch_start_ = Vec2(0, 0);
+    vec_pinch_start_center_ = Vec2(0, 0);
 
-    vec_flip_ = Vec2( 0, 0 );
+    vec_flip_ = Vec2(0, 0);
 
 }
 
-void TapCamera::InitParameters()
-{
+void TapCamera::InitParameters() {
     //Init parameters
     vec_offset_ = Vec3();
     vec_offset_now_ = Vec3();
 
     quat_ball_rot_ = Quaternion();
     quat_ball_now_ = Quaternion();
-    quat_ball_now_.ToMatrix( mat_rotation_ );
+    quat_ball_now_.ToMatrix(mat_rotation_);
     camera_rotation_ = 0.f;
 
     vec_drag_delta_ = Vec2();
@@ -90,21 +87,17 @@ void TapCamera::InitParameters()
 //----------------------------------------------------------
 //  Dtor
 //----------------------------------------------------------
-TapCamera::~TapCamera()
-{
-
+TapCamera::~TapCamera() {
 }
 
-void TapCamera::Update()
-{
-    if( momentum_ )
-    {
+void TapCamera::Update() {
+    if (momentum_) {
         float momenttum_steps = momentum_steps_;
 
         //Momentum rotation
         Vec2 v = vec_drag_delta_;
-        BeginDrag( Vec2() ); //NOTE:This call reset _VDragDelta
-        Drag( v * vec_flip_ );
+        BeginDrag (Vec2());
+        Drag(v * vec_flip_);
 
         //Momentum shift
         vec_offset_ += vec_offset_delta_;
@@ -118,24 +111,21 @@ void TapCamera::Update()
 
         //Count steps
         momentum_steps_ = momenttum_steps * MOMENTUM_FACTOR_DECREASE;
-        if( momentum_steps_ < MOMENTUM_FACTOR_THRESHOLD )
-        {
+        if (momentum_steps_ < MOMENTUM_FACTOR_THRESHOLD) {
             momentum_ = false;
         }
-    }
-    else
-    {
+    } else {
         vec_drag_delta_ *= MOMENTUM_FACTOR;
         vec_offset_delta_ = vec_offset_delta_ * MOMENTUM_FACTOR;
         BallUpdate();
     }
 
     Vec3 vec = vec_offset_ + vec_offset_now_;
-    Vec3 vec_tmp( TRANSFORM_FACTOR, -TRANSFORM_FACTOR, TRANSFORM_FACTORZ );
+    Vec3 vec_tmp(TRANSFORM_FACTOR, -TRANSFORM_FACTOR, TRANSFORM_FACTORZ);
 
     vec *= vec_tmp * vec_pinch_transform_factor_;
 
-    mat_transform_ = Mat4::Translation( vec );
+    mat_transform_ = Mat4::Translation(vec);
 }
 
 void TapCamera::BeginStop() {
@@ -150,33 +140,30 @@ void TapCamera::EndStop() {
     stopping_ = false;
 }
 
-Mat4& TapCamera::GetRotationMatrix()
-{
+Mat4& TapCamera::GetRotationMatrix() {
     return mat_rotation_;
 }
 
-Mat4& TapCamera::GetTransformMatrix()
-{
+Mat4& TapCamera::GetTransformMatrix() {
     return mat_transform_;
 }
 
-void TapCamera::Reset( const bool bAnimate )
-{
+void TapCamera::Reset(const bool bAnimate) {
     InitParameters();
     Update();
-
 }
 
 //----------------------------------------------------------
 //Drag control
 //----------------------------------------------------------
-void TapCamera::BeginDrag( const Vec2& v )
-{
-    if( dragging_ )
+void TapCamera::BeginDrag(const Vec2& v) {
+    if (dragging_) {
         EndDrag();
+    }
 
-    if( pinching_ )
+    if (pinching_) {
         EndPinch();
+    }
 
     Vec2 vec = v * vec_flip_;
     vec_ball_now_ = vec;
@@ -188,8 +175,7 @@ void TapCamera::BeginDrag( const Vec2& v )
     vec_drag_delta_ = Vec2();
 }
 
-void TapCamera::EndDrag()
-{
+void TapCamera::EndDrag() {
     quat_ball_down_ = quat_ball_now_;
     quat_ball_rot_ = Quaternion();
 
@@ -198,40 +184,42 @@ void TapCamera::EndDrag()
     momentum_steps_ = 1.0f;
 }
 
-void TapCamera::Drag( const Vec2& v )
-{
-    if( !dragging_ )
+void TapCamera::Drag(const Vec2& v) {
+    if (!dragging_) {
         return;
+    }
 
     Vec2 vec = v * vec_flip_;
     vec_ball_now_ = vec;
 
-    vec_drag_delta_ = vec_drag_delta_ * MOMENTUM_FACTOR + (vec - vec_last_input_);
+    vec_drag_delta_ = vec_drag_delta_ * MOMENTUM_FACTOR
+            + (vec - vec_last_input_);
     vec_last_input_ = vec;
 }
 
 //----------------------------------------------------------
 //Pinch controll
 //----------------------------------------------------------
-void TapCamera::BeginPinch( const Vec2& v1, const Vec2& v2 )
-{
-    if( dragging_ )
+void TapCamera::BeginPinch(const Vec2& v1, const Vec2& v2) {
+    if (dragging_) {
         EndDrag();
+    }
 
-    if( pinching_ )
+    if (pinching_) {
         EndPinch();
+    }
 
-    BeginDrag( Vec2() );
+    BeginDrag (Vec2() );
 
     vec_pinch_start_center_ = (v1 + v2) / 2.f;
 
     Vec2 vec = v1 - v2;
     float x_diff;
     float y_diff;
-    vec.Value( x_diff, y_diff );
+    vec.Value(x_diff, y_diff);
 
     pinch_start_distance_SQ_ = x_diff * x_diff + y_diff * y_diff;
-    camera_rotation_start_ = atan2f( y_diff, x_diff );
+    camera_rotation_start_ = atan2f(y_diff, x_diff);
     camera_rotation_now_ = 0;
 
     pinching_ = true;
@@ -241,8 +229,7 @@ void TapCamera::BeginPinch( const Vec2& v1, const Vec2& v2 )
     vec_offset_delta_ = Vec3();
 }
 
-void TapCamera::EndPinch()
-{
+void TapCamera::EndPinch() {
     pinching_ = false;
     momentum_ = true;
     momentum_steps_ = 1.f;
@@ -255,30 +242,32 @@ void TapCamera::EndPinch()
     EndDrag();
 }
 
-void TapCamera::Pinch( const Vec2& v1, const Vec2& v2 )
-{
-    if( !pinching_ )
+void TapCamera::Pinch(const Vec2& v1, const Vec2& v2) {
+    if (!pinching_) {
         return;
+    }
 
     //Update momentum factor
     vec_offset_last_ = vec_offset_now_;
 
     float x_diff, y_diff;
     Vec2 vec = v1 - v2;
-    vec.Value( x_diff, y_diff );
+    vec.Value(x_diff, y_diff);
 
     float fDistanceSQ = x_diff * x_diff + y_diff * y_diff;
 
     float f = pinch_start_distance_SQ_ / fDistanceSQ;
-    if( f < 1.f )
+    if (f < 1.f) {
         f = -1.f / f + 1.0f;
-    else
+    } else {
         f = f - 1.f;
-    if( isnan( f ) )
+    }
+    if (isnan(f)) {
         f = 0.f;
+    }
 
     vec = (v1 + v2) / 2.f - vec_pinch_start_center_;
-    vec_offset_now_ = Vec3( vec, flip_z_ * f );
+    vec_offset_now_ = Vec3(vec, flip_z_ * f);
 
     //Update momentum factor
     vec_offset_delta_ = vec_offset_delta_ * MOMENTUM_FACTOR
@@ -286,49 +275,43 @@ void TapCamera::Pinch( const Vec2& v1, const Vec2& v2 )
 
     //
     //Update ration quaternion
-    float fRotation = atan2f( y_diff, x_diff );
+    float fRotation = atan2f(y_diff, x_diff);
     camera_rotation_now_ = fRotation - camera_rotation_start_;
 
     //Trackball rotation
-    quat_ball_rot_ = Quaternion( 0.f, 0.f, sinf( -camera_rotation_now_ * 0.5f ),
-            cosf( -camera_rotation_now_ * 0.5f ) );
+    quat_ball_rot_ = Quaternion(0.f, 0.f, sinf(-camera_rotation_now_ * 0.5f),
+        cosf(-camera_rotation_now_ * 0.5f));
 }
 
 //----------------------------------------------------------
 //Trackball controll
 //----------------------------------------------------------
-void TapCamera::BallUpdate()
-{
-    if( dragging_ )
-    {
-        Vec3 vec_from = PointOnSphere( vec_ball_down_ );
-        Vec3 vec_to = PointOnSphere( vec_ball_now_ );
+void TapCamera::BallUpdate() {
+    if (dragging_) {
+        Vec3 vec_from = PointOnSphere(vec_ball_down_);
+        Vec3 vec_to = PointOnSphere(vec_ball_now_);
 
-        Vec3 vec = vec_from.Cross( vec_to );
-        float w = vec_from.Dot( vec_to );
+        Vec3 vec = vec_from.Cross(vec_to);
+        float w = vec_from.Dot(vec_to);
 
-        Quaternion qDrag = Quaternion( vec, w );
+        Quaternion qDrag = Quaternion(vec, w);
         qDrag = qDrag * quat_ball_down_;
         quat_ball_now_ = quat_ball_rot_ * qDrag;
     }
-    quat_ball_now_.ToMatrix( mat_rotation_ );
+    quat_ball_now_.ToMatrix(mat_rotation_);
 }
 
-Vec3 TapCamera::PointOnSphere( Vec2& point )
-{
+Vec3 TapCamera::PointOnSphere(Vec2& point) {
     Vec3 ball_mouse;
     float mag;
     Vec2 vec = (point - vec_ball_center_) / ball_radius_;
-    mag = vec.Dot( vec );
-    if( mag > 1.f )
-    {
-        float scale = 1.f / sqrtf( mag );
+    mag = vec.Dot(vec);
+    if (mag > 1.f) {
+        float scale = 1.f / sqrtf(mag);
         vec *= scale;
-        ball_mouse = Vec3( vec, 0.f );
-    }
-    else
-    {
-        ball_mouse = Vec3( vec, sqrtf( 1.f - mag ) );
+        ball_mouse = Vec3(vec, 0.f);
+    } else {
+        ball_mouse = Vec3(vec, sqrtf(1.f - mag));
     }
     return ball_mouse;
 }

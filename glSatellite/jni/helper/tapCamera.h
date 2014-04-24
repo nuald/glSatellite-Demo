@@ -23,16 +23,14 @@
 #include "vecmath.h"
 #include "interpolator.h"
 
-namespace helper
-{
+namespace helper {
 
 /******************************************************************
  * Camera control helper class with a tap gesture
  * This class is mainly used for 3D space camera control in samples.
  *
  */
-class TapCamera
-{
+class TapCamera {
 private:
     //Trackball
     ndk_helper::Vec2 vec_ball_center_;
@@ -84,9 +82,9 @@ private:
 public:
     TapCamera();
     virtual ~TapCamera();
-    void BeginDrag( const ndk_helper::Vec2& vec );
+    void BeginDrag(const ndk_helper::Vec2& vec);
     void EndDrag();
-    void Drag( const ndk_helper::Vec2& vec );
+    void Drag(const ndk_helper::Vec2& vec);
     void Update();
     void BeginStop();
     void EndStop();
@@ -94,22 +92,20 @@ public:
     ndk_helper::Mat4& GetRotationMatrix();
     ndk_helper::Mat4& GetTransformMatrix();
 
-    void BeginPinch( const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2 );
+    void BeginPinch(const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2);
     void EndPinch();
-    void Pinch( const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2 );
+    void Pinch(const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2);
 
-    void SetFlip( const float x, const float y, const float z )
-    {
-        vec_flip_ = ndk_helper::Vec2( x, y );
+    void SetFlip(const float x, const float y, const float z) {
+        vec_flip_ = ndk_helper::Vec2(x, y);
         flip_z_ = z;
     }
 
-    void SetPinchTransformFactor( const float x, const float y, const float z )
-    {
-        vec_pinch_transform_factor_ = ndk_helper::Vec3( x, y, z );
+    void SetPinchTransformFactor(const float x, const float y, const float z) {
+        vec_pinch_transform_factor_ = ndk_helper::Vec3(x, y, z);
     }
 
-    void Reset( const bool bAnimate );
+    void Reset(const bool bAnimate);
 
 };
 
