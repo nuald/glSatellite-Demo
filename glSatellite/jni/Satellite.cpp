@@ -65,7 +65,7 @@ double CurrentDaynum() {
     struct timeval tptr;
     double usecs, seconds;
 
-    x = gettimeofday(&tptr, NULL);
+    x = gettimeofday(&tptr, nullptr);
 
     usecs = 0.000001 * (double)tptr.tv_usec;
     seconds = usecs + (double)tptr.tv_sec;

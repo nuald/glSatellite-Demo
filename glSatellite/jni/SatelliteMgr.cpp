@@ -6,7 +6,7 @@ using namespace std;
 
 static unsigned char val[256];
 
-static char KepCheck(const string &line1, const string &line2) {
+static bool KepCheck(const string &line1, const string &line2) {
     /* This function scans line 1 and line 2 of a NASA 2-Line element
      set and returns a 1 if the element set appears to be valid or
      a 0 if it does not.  If the data survives this torture test,
@@ -42,12 +42,12 @@ static char KepCheck(const string &line1, const string &line2) {
             | (isdigit(line1[19]) ? 0 : 1) | (isdigit(line2[31]) ? 0 : 1)
             | (isdigit(line2[32]) ? 0 : 1);
 
-    return (x ? 0 : 1);
+    return !x;
 }
 
 void SatelliteMgr::Init(IFileReader& fd) {
     sat_.clear();
-    // Use temporaty vector to set all values at once below
+    // Use temporary vector to set all values at once below
     vector<Satellite> sat_list;
     if (fd.is_open()) {
         while (!fd.eof()) {

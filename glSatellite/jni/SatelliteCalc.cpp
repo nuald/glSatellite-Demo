@@ -224,7 +224,7 @@ SatelliteCalc::SatelliteCalc(const Satellite& satellite) {
 
 void SatelliteCalc::Calc(double daynum) {
     // Zero vector for initializations
-    vector_t zero_vector = {0, 0, 0, 0};
+    vector_t zero_vector = {};
 
     // Satellite position and velocity vectors
     vector_t vel = zero_vector;
@@ -256,7 +256,7 @@ void SatelliteCalc::Calc(double daynum) {
     vel.Magnitude();
     sat_vel = vel.w;
 
-    // All angles in rads. Distance in km. Velocity in km/s
+    // All angles in radians. Distance in km. Velocity in km/s
     CalculateLatLonAlt(jul_utc, pos, sat_geodetic);
 
     // Convert satellite data
@@ -289,12 +289,12 @@ double SatelliteCalc::ThetaG() {
 }
 
 void SatelliteCalc::SelectEphemeris() {
-    // Selects the apropriate ephemeris type to be used
+    // Selects the appropriate ephemeris type to be used
     // for predictions according to the data in the TLE
     // It also processes values in the TLE set so that
-    // they are apropriate for the SGP4/SDP4 routines
+    // they are appropriate for the SGP4/SDP4 routines
 
-    // Preprocess tle set
+    // Preprocess TLE set
     tle_xnodeo *= DEG2RAD;
     tle_omegao *= DEG2RAD;
     tle_xmo *= DEG2RAD;

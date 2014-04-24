@@ -168,8 +168,8 @@ void GlobeRenderer::MakeBeams() {
     }
 
     // Calculate geometry first
-    int overall_planes = 0;
-    planes_per_beam_.reset(new int[num_beams_]);
+    size_t overall_planes = 0;
+    planes_per_beam_.reset(new size_t[num_beams_]);
 
     // Update all positions
     mgr_.UpdateAll();
@@ -195,7 +195,7 @@ void GlobeRenderer::MakeBeams() {
     unique_ptr<float[]> geometry_data(new float[num_geometry]);
     unique_ptr<float[]> tex_data(new float[num_uv]);
     auto index = 0, ti = 0;
-    const int STEP_NUM = 4;
+    const size_t STEP_NUM = 4;
     int geo_manip_x[STEP_NUM] = {1, 1, -1, -1};
     int geo_manip_y[STEP_NUM] = {1, -1, 1, -1};
     int tex_manip_u[STEP_NUM] = {1, 1, 0, 0};
@@ -208,11 +208,10 @@ void GlobeRenderer::MakeBeams() {
         auto width = BEAM_WIDTH;
         float x, y, z;
 
-        for (int j = 0; j < planes_per_beam_[i]; ++j) {
-            for (int step = 0; step < STEP_NUM; ++step) {
-                int _step = step;
-                Vec3 coord = Coord2Vec3(latitude + width * geo_manip_y[_step],
-                    longitude + width * geo_manip_x[_step]);
+        for (size_t j = 0; j < planes_per_beam_[i]; ++j) {
+            for (size_t step = 0; step < STEP_NUM; ++step) {
+                Vec3 coord = Coord2Vec3(latitude + width * geo_manip_y[step],
+                    longitude + width * geo_manip_x[step]);
                 coord *= (GLOBE_RADIUS + 0.5 + BEAM_PLANE_DIFF * j);
                 coord.Value(x, y, z);
 
@@ -220,8 +219,8 @@ void GlobeRenderer::MakeBeams() {
                 geometry_data[index++] = y;
                 geometry_data[index++] = z;
 
-                tex_data[ti++] = tex_manip_u[_step];
-                tex_data[ti++] = tex_manip_v[_step];
+                tex_data[ti++] = tex_manip_u[step];
+                tex_data[ti++] = tex_manip_v[step];
             }
         }
     }
@@ -239,7 +238,7 @@ void GlobeRenderer::MakeBeams() {
 
     // WARNING: android NDK log2 implementation is wrong
     // (probably for C++0x only)
-    unsigned tuple_size = ceil(log(num_beams_ + 1) / log(2) / 3);
+    size_t tuple_size = ceil(log(num_beams_ + 1) / log(2) / 3);
     for (size_t i = 0; i < num_beams_; ++i) {
         int plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
         unsigned first_tuple = (1 << tuple_size) - 1;
@@ -249,7 +248,7 @@ void GlobeRenderer::MakeBeams() {
         unsigned third_tuple = (1 << (tuple_size * 3)) - 1 - first_tuple
                 - second_tuple;
         unsigned color_b = ((i + 1) & third_tuple) >> (2 * tuple_size);
-        for (int j = 0; j < plane_num; ++j) {
+        for (size_t j = 0; j < plane_num; ++j) {
             color_data_[index + j * 3] = 1.f * color_r / first_tuple;
             color_data_[index + 1 + j * 3] = 1.f * color_g / first_tuple;
             color_data_[index + 2 + j * 3] = 1.f * color_b / first_tuple;
@@ -289,7 +288,7 @@ void GlobeRenderer::InitFBO() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // // attach render buffer (depth) and texture (colour) to fb
+    // // attach render buffer (depth) and texture (color) to fb
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
         GL_RENDERBUFFER, rb);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
@@ -441,7 +440,7 @@ void GlobeRenderer::RenderBackground() {
     glEnableVertexAttribArray(ATTRIB_UV);
 
     unique_ptr<float[]> color_data(new float[3 * num_points_]);
-    for (int i = 0; i < num_points_ / PTS_PER_STAR; ++i) {
+    for (size_t i = 0; i < num_points_ / PTS_PER_STAR; ++i) {
         float color = 1.f;
         if (1.0f * random() / RAND_MAX < STAR_BLINK_FREQ) {
             color = 1.f * random() / RAND_MAX;
@@ -460,7 +459,7 @@ void GlobeRenderer::RenderBackground() {
     glVertexAttribPointer(ATTRIB_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(ATTRIB_NORMAL);
 
-    for (int i = 0; i < num_points_; i += PTS_PER_STAR) {
+    for (size_t i = 0; i < num_points_; i += PTS_PER_STAR) {
         glDrawArrays(GL_TRIANGLE_STRIP, i, PTS_PER_STAR);
     }
 
@@ -496,7 +495,7 @@ void GlobeRenderer::RenderBeams(bool fbo = false) {
     Vec3 vec_from = Coord2Vec3(INITIAL_LATITUDE, INITIAL_LONGITUDE).Normalize();
     // Update all positions
     mgr_.UpdateAll();
-    for (int i = 0; i < num_beams_; ++i) {
+    for (size_t i = 0; i < num_beams_; ++i) {
         Satellite &sat = mgr_.GetSatellite(i);
         auto latitude = 90 - sat.GetLatitude();
         auto longitude = sat.GetLongitude() - 90;
@@ -548,13 +547,13 @@ void GlobeRenderer::Render() {
         glBindFramebuffer(GL_FRAMEBUFFER, fb_);
         float x, y;
         read_coord_.Value(x, y);
-        unsigned char data[4] = {};
+        uint8_t data[4] = {};
         glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
-        int index = 0;
-        for (int i = 0; i < num_beams_; ++i) {
-            int plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
+        size_t index = 0;
+        for (size_t i = 0; i < num_beams_; ++i) {
+            size_t plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
             bool found = true;
-            for (int j = 0; j < 3; ++j) {
+            for (size_t j = 0; j < 3; ++j) {
                 found = found
                         && fabs(255 * color_data_[index + j] - data[j]) <= 1;
             }

@@ -36,22 +36,6 @@ Message ReadMessageQueue(int pipe_read) {
 }
 
 /* Internal implementation */
-
-#if 0
-static int MessageQueueCb(int fd, int events, void* user) {
-    Message msg;
-    HandleMessagePtr handler = (HandleMessagePtr)user;
-    while (read(fd, (void*)&msg, sizeof(msg)) == sizeof(msg)) {
-        /* Do whatever needs doing when a message is
-         * received. Provided sizeof(msg) <= PIPE_BUF
-         * you should never get short reads. */
-        handler(msg);
-    }
-
-    return 1;
-}
-#endif
-
 int MessageQueue::AddMessageQueue(android_poll_source *src) {
     if (!looper_) {
         return -1;

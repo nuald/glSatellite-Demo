@@ -35,11 +35,11 @@ struct SHADER_PARAMS {
 };
 
 class GlobeRenderer {
-    int32_t num_indices_, num_points_, num_beams_;
+    size_t num_indices_, num_points_, num_beams_;
     GLuint buffer_[MAX_BUFFERS];
     GLuint texture_;
     GLuint star_texture_;
-    std::unique_ptr<int[]> planes_per_beam_;
+    std::unique_ptr<size_t[]> planes_per_beam_;
     SatelliteMgr mgr_;
     bool zoom_in_enabled_, zoom_out_enabled_, read_requested_;
     ndk_helper::Vec2 read_coord_;
