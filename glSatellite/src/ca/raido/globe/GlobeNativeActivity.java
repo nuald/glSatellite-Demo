@@ -150,7 +150,8 @@ public class GlobeNativeActivity extends NativeActivity {
             public void run() {
                 if (!downloadFile()) {
                     Resources res = getResources();
-                    showToast(String.format(res.getString(R.string.FAIL), url_));
+                    showToast(String.format(
+                        res.getString(R.string.format_fail), url_));
                 }
             }
         }).start();
@@ -178,7 +179,6 @@ public class GlobeNativeActivity extends NativeActivity {
     }
 
     native void ShowAds();
-
     native void UseTle(String path);
 
     LinearLayout _mainLayout;
@@ -288,10 +288,10 @@ public class GlobeNativeActivity extends NativeActivity {
                 if (label == null) {
                     if (usedUrl_ == null) {
                         result = String.format(Locale.getDefault(),
-                            res.getString(R.string.DFL), fps_);
+                            res.getString(R.string.format_default), fps_);
                     } else {
                         result = String.format(Locale.getDefault(),
-                            res.getString(R.string.FMT), fps_, dt_,
+                            res.getString(R.string.format_std), fps_, dt_,
                             formatUrl(usedUrl_));
                     }
                 } else {
@@ -331,8 +331,8 @@ public class GlobeNativeActivity extends NativeActivity {
 
     public void showBeam(String name, float lat, float lon, float alt) {
         Resources res = getResources();
-        String msg = String.format(res.getString(R.string.BMF), name, lat, lon,
-            alt);
+        String msg = String.format(res.getString(R.string.format_info), name,
+            lat, lon, alt);
         showToast(msg);
     }
 

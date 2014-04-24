@@ -18,6 +18,7 @@ public:
 
         snprintf(error, sizeof(error), "Error at %s:\n%s", at, msg);
     }
+
     const char* what() const {
         return error;
     }
