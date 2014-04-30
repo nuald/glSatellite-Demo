@@ -12,7 +12,7 @@ class Satellite {
     std::string name_;
     std::string line1_;
     std::string line2_;
-    long catnum_;
+    int catnum_;
     long setnum_;
     std::string designator_;
     int year_;
@@ -34,11 +34,15 @@ public:
     Satellite(const std::string& name, const std::string& line1,
         const std::string& line2);
 
+    bool IsDecayed();
     void UpdatePosition();
     double GetLatitude();
     double GetLongitude();
     double GetAltitude();
     std::string GetName() const {
         return name_;
+    }
+    int GetCatNum() const {
+        return catnum_;
     }
 };

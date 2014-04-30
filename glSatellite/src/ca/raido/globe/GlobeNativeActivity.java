@@ -329,10 +329,11 @@ public class GlobeNativeActivity extends NativeActivity {
         });
     }
 
-    public void showBeam(String name, float lat, float lon, float alt) {
+    public void showBeam(String name, int catnum, float lat, float lon,
+        float alt) {
         Resources res = getResources();
         String msg = String.format(res.getString(R.string.format_info), name,
-            lat, lon, alt);
+            catnum, lat, lon, alt);
         showToast(msg);
     }
 

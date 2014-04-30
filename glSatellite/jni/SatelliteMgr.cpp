@@ -61,7 +61,9 @@ void SatelliteMgr::Init(IFileReader& fd) {
             if (KepCheck(line1, line2) && !fd.eof()) {
                 /* We found a valid TLE! */
                 Satellite sat(name, line1, line2);
-                sat_list.push_back(sat);
+                if (!sat.IsDecayed()) {
+                    sat_list.push_back(sat);
+                }
             }
         }
     }

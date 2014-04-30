@@ -346,11 +346,12 @@ void Engine::ShowBeam(int num) {
     //Default class retrieval
     auto clazz = jni->GetObjectClass(app_->activity->clazz);
     auto methodID = jni->GetMethodID(clazz, "showBeam",
-        "(Ljava/lang/String;FFF)V");
+        "(Ljava/lang/String;IFFF)V");
     Satellite &sat = renderer_.GetSatellite(num);
     jstring j_name = jni->NewStringUTF(sat.GetName().c_str());
     jni->CallVoidMethod(app_->activity->clazz, methodID, j_name,
-        sat.GetLatitude(), sat.GetLongitude(), sat.GetAltitude());
+        sat.GetCatNum(), sat.GetLatitude(), sat.GetLongitude(),
+        sat.GetAltitude());
 
     app_->activity->vm->DetachCurrentThread();
 }

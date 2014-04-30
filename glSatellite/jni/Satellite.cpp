@@ -10,24 +10,40 @@
 
 using namespace std;
 
+/* Return a substring based on the starting and ending positions provided. */
 static string SubString(const string &value, size_t start, size_t end) {
-    /* This function returns a substring based on the starting
-     and ending positions provided.  It is used heavily in
-     the AutoUpdate function when parsing 2-line element data. */
-
     string str = value.substr(start, end - start + 1);
     str.erase(remove_if(str.begin(), str.end(), ptr_fun<int, int>(isspace)),
         str.end());
     return str;
 }
 
-// trim from end
+/* Trim spaces from end */
 static inline string RTrim(const string &s) {
     string result(s);
     result.erase(
         find_if(result.rbegin(), result.rend(),
             not1(ptr_fun<int, int>(isspace))).base(), result.end());
     return result;
+}
+
+/* Calculate the day number from m/d/y. */
+static long DayNum(int m, int d, int y) {
+    if (m < 3) {
+        y--;
+        m += 12;
+    }
+
+    if (y < 57) {
+        y += 100;
+    }
+
+    double yy = (double)y;
+    double mm = (double)m;
+    long dn=(long)(floor(365.25 * (yy - 80.0)) - floor(19.0 + yy / 100.0)
+        + floor(4.75 + yy / 400.0) - 16.0);
+    dn += d + 30 * m + (long)floor(0.6 * mm - 0.3);
+    return dn;
 }
 
 Satellite::Satellite(const string& name, const string& line1,
@@ -38,8 +54,8 @@ Satellite::Satellite(const string& name, const string& line1,
     /* Updates data in TLE structure based on
      line1 and line2 stored in structure. */
 
+    catnum_ = atoi(SubString(line1, 2, 6).c_str());
     designator_ = SubString(line1, 9, 16);
-    catnum_ = atol(SubString(line1, 2, 6).c_str());
     year_ = atoi(SubString(line1, 18, 19).c_str());
     refepoch_ = atof(SubString(line1, 20, 31).c_str());
     double tempnum = 1.0e-5 * atof(SubString(line1, 44, 49).c_str());
@@ -89,4 +105,10 @@ double Satellite::GetLongitude() {
 
 double Satellite::GetAltitude() {
     return sat_alt;
+}
+
+bool Satellite::IsDecayed() {
+    double satepoch = DayNum(1, 0, year_) + refepoch_;
+    double dn = CurrentDaynum();
+    return satepoch + (16.666666 - meanmo_) / (10.0 * fabs(drag_)) < dn;
 }
