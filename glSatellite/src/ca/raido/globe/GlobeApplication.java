@@ -17,12 +17,16 @@ public class GlobeApplication extends Application {
         NDKHelper.setContext(context);
         if (DEVELOPER_MODE) {
             Log.d(context.getPackageName(), "onCreate called");
+            // Strict mode doesn't work properly (at least on Android 4.2.1)
+            // see https://code.google.com/p/android/issues/detail?id=54285
+            /*
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectDiskReads().detectDiskWrites().detectAll()
                     .penaltyLog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects().detectLeakedClosableObjects()
                     .penaltyLog().penaltyDeath().build());
+            */
         }
     }
 }
