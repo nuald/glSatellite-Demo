@@ -1,4 +1,4 @@
-package ca.raido.globe;
+package ca.raido.glSatelliteDemo;
 
 import java.io.BufferedInputStream;
 import java.io.File;

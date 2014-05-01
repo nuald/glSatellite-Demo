@@ -282,6 +282,16 @@ void Engine::TransformPosition(Vec2 &vec) {
                 gl_context_->GetScreenHeight()) - Vec2(1.f, 1.f);
 }
 
+void Engine::TrimMemory() {
+    if (g_developer_mode) {
+        LOGI("Trimming memory");
+    }
+    gl_context_->Invalidate();
+}
+
+/*
+    JNI helpers
+*/
 void Engine::ShowUI() {
     JNIEnv *jni;
     app_->activity->vm->AttachCurrentThread(&jni, nullptr);
@@ -333,7 +343,9 @@ void Engine::ShowAds() {
 }
 
 void Engine::UseTle(char *path) {
-    LOGI("New TLE file: %s", path);
+    if (g_developer_mode) {
+        LOGI("New TLE file: %s", path);
+    }
     auto reader = FileReaderFactory::Get(APP, path);
     renderer_.InitSatelliteMgr(*reader);
     free(path);

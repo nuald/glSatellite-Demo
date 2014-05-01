@@ -296,9 +296,13 @@ void GlobeRenderer::InitFBO() {
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status == GL_FRAMEBUFFER_COMPLETE) {
-        LOGI("Single FBO setup successfully.");
+        if (g_developer_mode) {
+            LOGI("Single FBO setup successfully.");
+        }
     } else {
-        LOGI("Problem in setup FBO texture: %x.", status);
+        throw RuntimeError(AT, "Problem in setup FBO texture %x.", status);
+    }
+    if (g_developer_mode) {
     }
 
     // bind default fb (number 0) so that we render normally next time
@@ -573,7 +577,9 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
     const char *strFsh) {
     // Create shader program
     auto program = glCreateProgram();
-    LOGI("Created Shader %d", program);
+    if (g_developer_mode) {
+        LOGI("Created Shader %d", program);
+    }
 
     class ShaderHelper {
         GLuint shader;

@@ -5,7 +5,7 @@
         android:persistent="true"
         android:title="@string/pref_url_title" />
 
-    <ca.raido.globe.DbPickerPreference
+    <ca.raido.glSatelliteDemo.DbPickerPreference
         android:defaultValue="iridium"
         android:key="prefSatellite"
         android:persistent="true"

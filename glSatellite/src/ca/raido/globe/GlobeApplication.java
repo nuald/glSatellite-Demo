@@ -1,4 +1,4 @@
-package ca.raido.globe;
+package ca.raido.glSatelliteDemo;
 
 import android.app.Application;
 import android.content.Context;
@@ -8,13 +8,14 @@ import ca.raido.helper.NDKHelper;
 
 public class GlobeApplication extends Application {
     private static Context context;
-    // TODO: disable DEVELOPER_MODE for production
-    public static boolean DEVELOPER_MODE = true;
+
+    public static boolean DEVELOPER_MODE = false;
 
     @Override
     public void onCreate() {
         context = getApplicationContext();
         NDKHelper.setContext(context);
+        DEVELOPER_MODE = NDKHelper.isDeveloperMode();
         if (DEVELOPER_MODE) {
             Log.d(context.getPackageName(), "onCreate called");
             // Strict mode doesn't work properly (at least on Android 4.2.1)

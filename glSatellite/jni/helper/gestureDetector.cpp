@@ -15,6 +15,7 @@
  */
 
 #include "NDKHelper.h"
+#include "DebugUtils.h"
 #include "gestureDetector.h"
 
 using namespace ndk_helper;
@@ -65,7 +66,9 @@ GESTURE_STATE TapDetector::Detect(const AInputEvent* motion_event) {
                 float x = AMotionEvent_getX(motion_event, 0) - down_x_;
                 float y = AMotionEvent_getY(motion_event, 0) - down_y_;
                 if (x * x + y * y < TOUCH_SLOP * TOUCH_SLOP * dp_factor_) {
-                    LOGI("TapDetector: Tap detected");
+                    if (g_developer_mode) {
+                        LOGI("TapDetector: Tap detected");
+                    }
                     return GESTURE_STATE_ACTION;
                 }
             }
@@ -102,7 +105,9 @@ GESTURE_STATE DoubletapDetector::Detect(const AInputEvent* motion_event) {
             float y = AMotionEvent_getY(motion_event, 0) - last_tap_y_;
             if (x * x + y * y
                     < DOUBLE_TAP_SLOP * DOUBLE_TAP_SLOP * dp_factor_) {
-                LOGI("DoubletapDetector: Doubletap detected");
+                if (g_developer_mode) {
+                    LOGI("DoubletapDetector: Doubletap detected");
+                }
                 return GESTURE_STATE_ACTION;
             }
         }

@@ -50,10 +50,6 @@ public:
     void TermDisplay() {
         gl_context_->Suspend();
     }
-    void TrimMemory() {
-        LOGI("Trimming memory");
-        gl_context_->Invalidate();
-    }
     bool IsReady() {
         return has_focus_ && no_error_;
     }
@@ -68,6 +64,7 @@ public:
     void ProcessSensors(int32_t id);
     void SuspendSensors();
     void ResumeSensors();
+    void TrimMemory();
     void UpdateZoom(ndk_helper::Vec2 v1, ndk_helper::Vec2 v2);
     bool IsZoomEnabled(ndk_helper::Vec2 v1, ndk_helper::Vec2 v2);
 };

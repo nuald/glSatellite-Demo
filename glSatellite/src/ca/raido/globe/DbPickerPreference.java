@@ -1,4 +1,4 @@
-package ca.raido.globe;
+package ca.raido.glSatelliteDemo;
 
 import android.content.Context;
 import android.preference.DialogPreference;

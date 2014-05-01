@@ -6,22 +6,26 @@ const char *HELPER_CLASS_NAME = "ca/raido/helper/NDKHelper";
 Engine g_engine;
 android_poll_source g_poll_src;
 int g_msgread;
+bool g_developer_mode = false;
 
-// Message queue helpers
+/* JNI helpers:
+   - message queue helpers
+   - additional NDK helpers
+*/
 void HandleMessageWrapper(android_app* app, android_poll_source* source) {
     Message msg = ReadMessageQueue(g_msgread);
     g_engine.HandleMessage(msg);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_ca_raido_globe_GlobeNativeActivity_ShowAds(
+Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_ShowAds(
         JNIEnv *env, jobject thiz) {
     Message msg = {SHOW_ADS, 0};
     PostMessage(msg);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_ca_raido_globe_GlobeNativeActivity_UseTle(
+Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_UseTle(
         JNIEnv *env, jobject thiz, jstring javaString) {
     const char *nativeString = env->GetStringUTFChars(javaString, 0);
     size_t len = strlen(nativeString);
@@ -30,6 +34,35 @@ Java_ca_raido_globe_GlobeNativeActivity_UseTle(
     env->ReleaseStringUTFChars(javaString, nativeString);
     Message msg = {USE_TLE, path};
     PostMessage(msg);
+}
+
+jclass RetrieveClass(JNIEnv *jni, ANativeActivity* activity,
+        const char* class_name) {
+    auto activity_class = jni->GetObjectClass(activity->clazz);
+    jmethodID get_class_loader = jni->GetMethodID(activity_class,
+        "getClassLoader", "()Ljava/lang/ClassLoader;");
+    jobject cls = jni->CallObjectMethod(activity->clazz, get_class_loader);
+    jclass class_loader = jni->FindClass("java/lang/ClassLoader");
+    jmethodID find_class = jni->GetMethodID(class_loader, "loadClass",
+        "(Ljava/lang/String;)Ljava/lang/Class;");
+
+    jstring str_class_name = jni->NewStringUTF(class_name);
+    jclass class_retrieved = (jclass)jni->CallObjectMethod(cls, find_class,
+        str_class_name);
+    jni->DeleteLocalRef(str_class_name);
+    return class_retrieved;
+}
+
+void ReadDeveloperMode(ANativeActivity* activity) {
+    JNIEnv *jni;
+    activity->vm->AttachCurrentThread(&jni, nullptr);
+
+    auto clazz = RetrieveClass(jni, activity, HELPER_CLASS_NAME);
+    auto methodID = jni->GetStaticMethodID(clazz, "isDeveloperMode",
+        "()Z");
+    jboolean jMode = jni->CallStaticBooleanMethod(clazz, methodID);
+    g_developer_mode = (bool)jMode;
+    activity->vm->DetachCurrentThread();
 }
 
 /**
@@ -44,6 +77,7 @@ void android_main(android_app *state) {
 
     //Init helper functions
     ndk_helper::JNIHelper::Init(state->activity, HELPER_CLASS_NAME);
+    ReadDeveloperMode(state->activity);
 
     state->userData = &g_engine;
     state->onAppCmd = Engine::HandleCmd;

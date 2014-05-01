@@ -36,9 +36,14 @@ public class NDKHelper {
     private static Context context;
 
     public static void setContext(Context c) {
-        Log.d(c.getPackageName(), "setContext: " + c);
         context = c;
     }
+
+    public static boolean isDeveloperMode() {
+        ApplicationInfo ai = context.getApplicationInfo();
+        return (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
 
     //
     // Load Bitmap

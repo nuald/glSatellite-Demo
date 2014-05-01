@@ -5,6 +5,7 @@
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 const size_t MAX_ERR_LEN = 255;
+extern bool g_developer_mode;
 
 class RuntimeError {
     char error[MAX_ERR_LEN];
@@ -17,6 +18,9 @@ public:
         va_end(ap);
 
         snprintf(error, sizeof(error), "Error at %s:\n%s", at, msg);
+        if (g_developer_mode) {
+            LOGI("%s", error);
+        }
     }
 
     const char* what() const {

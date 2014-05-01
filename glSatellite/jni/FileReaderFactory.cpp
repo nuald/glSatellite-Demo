@@ -1,5 +1,3 @@
-#include "FileReaderFactory.h"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -7,6 +5,8 @@
 #include <vector>
 
 #include "NDKHelper.h"
+#include "DebugUtils.h"
+#include "FileReaderFactory.h"
 
 using namespace std;
 using namespace ndk_helper;
@@ -39,7 +39,9 @@ public:
     AppFileReader(const string& path) {
         std::vector < uint8_t > data;
         if (!JNIHelper::GetInstance()->ReadFile(path.c_str(), &data)) {
-            LOGI("Can not open a file: %s", path.c_str());
+            if (g_developer_mode) {
+                LOGI("Can not open a file: %s", path.c_str());
+            }
         } else {
             std::string str(data.begin(), data.end());
             stream_ = stringstream(str);
