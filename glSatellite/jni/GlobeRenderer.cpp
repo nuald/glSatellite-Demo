@@ -554,7 +554,7 @@ void GlobeRenderer::Render() {
         uint8_t data[4] = {};
         glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
         size_t index = 0;
-        for (size_t i = 0; i < num_beams_; ++i) {
+        for (long i = 0; i < num_beams_; ++i) {
             size_t plane_num = planes_per_beam_[i] * PTS_PER_BEAM;
             bool found = true;
             for (size_t j = 0; j < 3; ++j) {

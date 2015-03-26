@@ -351,7 +351,7 @@ void Engine::UseTle(char *path) {
     free(path);
 }
 
-void Engine::ShowBeam(int num) {
+void Engine::ShowBeam(long num) {
     JNIEnv *jni;
     app_->activity->vm->AttachCurrentThread(&jni, nullptr);
 
@@ -377,7 +377,7 @@ void Engine::HandleMessage(Message msg) {
         UseTle(reinterpret_cast<char*>(msg.payload));
         break;
     case SHOW_BEAM:
-        ShowBeam(reinterpret_cast<int>(msg.payload));
+        ShowBeam(reinterpret_cast<long>(msg.payload));
         break;
     }
 }
