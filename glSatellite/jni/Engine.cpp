@@ -48,10 +48,10 @@ void Engine::InitDisplay() {
     }
 
     // Initialize GL state.
-    glEnable (GL_CULL_FACE);
-    glCullFace (GL_BACK);
-    glEnable (GL_DEPTH_TEST);
-    glDepthFunc (GL_LEQUAL);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     //Note that screen size might have been changed
     glViewport(0, 0, gl_context_->GetScreenWidth(),
