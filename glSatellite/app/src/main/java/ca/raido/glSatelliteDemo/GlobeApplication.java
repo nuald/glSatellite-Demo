@@ -7,19 +7,13 @@ import android.util.Log;
 import ca.raido.helper.NDKHelper;
 
 public class GlobeApplication extends Application {
-    private static Context context;
-
-    public static boolean DEVELOPER_MODE = false;
+    public static final boolean DEVELOPER_MODE = false;
 
     @Override
     public void onCreate() {
-        context = getApplicationContext();
-        NDKHelper.setContext(context);
-        DEVELOPER_MODE = NDKHelper.isDeveloperMode();
+        super.onCreate();
         if (DEVELOPER_MODE) {
-            Log.d(context.getPackageName(), "onCreate called");
-            // Strict mode doesn't work properly (at least on Android 4.2.1)
-            // see https://code.google.com/p/android/issues/detail?id=54285
+            Log.d(getApplicationContext().getPackageName(), "onCreate called");
             /*
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectDiskReads().detectDiskWrites().detectAll()

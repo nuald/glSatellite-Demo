@@ -54,17 +54,17 @@ jclass RetrieveClass(JNIEnv *jni, ANativeActivity* activity,
     return class_retrieved;
 }
 
-void ReadDeveloperMode(ANativeActivity* activity) {
-    JNIEnv *jni;
-    activity->vm->AttachCurrentThread(&jni, nullptr);
+// void ReadDeveloperMode(ANativeActivity* activity) {
+//     JNIEnv *jni;
+//     activity->vm->AttachCurrentThread(&jni, nullptr);
 
-    auto clazz = RetrieveClass(jni, activity, HELPER_CLASS_NAME);
-    auto methodID = jni->GetStaticMethodID(clazz, "isDeveloperMode",
-        "()Z");
-    jboolean jMode = jni->CallStaticBooleanMethod(clazz, methodID);
-    g_developer_mode = (bool)jMode;
-    activity->vm->DetachCurrentThread();
-}
+//     auto clazz = RetrieveClass(jni, activity, HELPER_CLASS_NAME);
+//     auto methodID = jni->GetStaticMethodID(clazz, "isDeveloperMode",
+//         "()Z");
+//     jboolean jMode = jni->CallStaticBooleanMethod(clazz, methodID);
+//     g_developer_mode = (bool)jMode;
+//     activity->vm->DetachCurrentThread();
+// }
 
 /**
  * This is the main entry point of a native application that is using
@@ -78,7 +78,7 @@ void android_main(android_app *state) {
 
     //Init helper functions
     ndk_helper::JNIHelper::Init(state->activity, HELPER_CLASS_NAME);
-    ReadDeveloperMode(state->activity);
+    // ReadDeveloperMode(state->activity);
 
     state->userData = &g_engine;
     state->onAppCmd = Engine::HandleCmd;

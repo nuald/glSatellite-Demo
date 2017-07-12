@@ -241,7 +241,7 @@ uint32_t JNIHelper::LoadTexture(const char* file_name, int32_t* outWidth,
   jobject out = env->CallObjectMethod(jni_helper_java_ref_, mid, name);
 
   jclass javaCls =
-      RetrieveClass(env, "com/sample/helper/NDKHelper$TextureInformation");
+      RetrieveClass(env, "ca/raido/helper/NDKHelper$TextureInformation");
   jfieldID fidRet = env->GetFieldID(javaCls, "ret", "Z");
   jfieldID fidHasAlpha = env->GetFieldID(javaCls, "alphaChannel", "Z");
   jfieldID fidWidth = env->GetFieldID(javaCls, "originalWidth", "I");

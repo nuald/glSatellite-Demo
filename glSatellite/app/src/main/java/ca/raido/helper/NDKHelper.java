@@ -22,28 +22,32 @@ import java.io.FileInputStream;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.NativeActivity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.opengl.GLUtils;
+import android.os.Build;
 import android.util.Log;
 
 public class NDKHelper {
-    private static Context context;
 
-    public static void setContext(Context c) {
-        context = c;
+    private NativeActivity activity;
+
+    public NDKHelper(NativeActivity act) {
+        activity = act;
     }
 
-    public static boolean isDeveloperMode() {
-        ApplicationInfo ai = context.getApplicationInfo();
+    public boolean isDeveloperMode() {
+        ApplicationInfo ai = activity.getApplicationInfo();
         return (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
-
 
     //
     // Load Bitmap
@@ -77,20 +81,29 @@ public class NDKHelper {
             bitmapToScale.getWidth(), bitmapToScale.getHeight(), matrix, true);
     }
 
-    public boolean loadTexture(String path) {
+    public class TextureInformation {
+        boolean ret;
+        boolean alphaChannel;
+        int originalWidth;
+        int originalHeight;
+        Object image;
+    }
+
+    public Object loadTexture(String path) {
         Bitmap bitmap = null;
+        TextureInformation info = new TextureInformation();
         try {
             String str = path;
             if (!path.startsWith("/")) {
                 str = "/" + path;
             }
 
-            File file = new File(context.getExternalFilesDir(null), str);
+            File file = new File(activity.getExternalFilesDir(null), str);
             if (file.canRead()) {
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
             } else {
-                bitmap = BitmapFactory.decodeStream(context.getResources()
-                        .getAssets().open(path));
+                bitmap = BitmapFactory.decodeStream(activity.getResources()
+                    .getAssets().open(path));
             }
             // Matrix matrix = new Matrix();
             // // resize the bit map
@@ -101,21 +114,26 @@ public class NDKHelper {
             // bitmap.getHeight(), matrix, true);
 
         } catch (Exception e) {
-            Log.e(context.getPackageName(), "Couldn't load a file: " + path);
-            return false;
+            Log.w("NDKHelper", "Coundn't load a file:" + path);
+            info.ret = false;
+            return info;
         }
 
         if (bitmap != null) {
             GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
         }
-        return true;
+        info.ret = true;
+        info.alphaChannel = bitmap.hasAlpha();
+        info.originalWidth = getBitmapWidth(bitmap);
+        info.originalHeight = getBitmapHeight(bitmap);
 
+        return info;
     }
 
     public Bitmap openBitmap(String path, boolean iScalePOT) {
         Bitmap bitmap = null;
         try {
-            bitmap = BitmapFactory.decodeStream(context.getResources()
+            bitmap = BitmapFactory.decodeStream(activity.getResources()
                     .getAssets().open(path));
             if (iScalePOT) {
                 int originalWidth = getBitmapWidth(bitmap);
@@ -129,7 +147,7 @@ public class NDKHelper {
             }
 
         } catch (Exception e) {
-            Log.e(context.getPackageName(), "Couldn't load a file: " + path);
+            Log.e(activity.getPackageName(), "Couldn't load a file: " + path);
         }
 
         return bitmap;
@@ -153,11 +171,10 @@ public class NDKHelper {
         bmp.recycle();
     }
 
-    public static String getNativeLibraryDirectory(Context appContext) {
-        ApplicationInfo ai = context.getApplicationInfo();
+    public String getNativeLibraryDirectory(Context appContext) {
+        ApplicationInfo ai = activity.getApplicationInfo();
 
-        Log.d(context.getPackageName(), "ai.nativeLibraryDir: "
-            + ai.nativeLibraryDir);
+        Log.w("NDKHelper", "ai.nativeLibraryDir:" + ai.nativeLibraryDir);
 
         if ((ai.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
             || (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
@@ -166,21 +183,34 @@ public class NDKHelper {
         return "/system/lib/";
     }
 
-    @SuppressLint("NewApi")
+    public String getApplicationName() {
+        final PackageManager pm = activity.getPackageManager();
+        ApplicationInfo ai;
+        try {
+            ai = pm.getApplicationInfo(activity.getPackageName(), 0);
+        } catch (final PackageManager.NameNotFoundException e) {
+            ai = null;
+        }
+        String applicationName = (String) (ai != null ? pm
+            .getApplicationLabel(ai) : "(unknown)");
+        return applicationName;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public int getNativeAudioBufferSize() {
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT >= 17) {
-            AudioManager am = (AudioManager)context
-                    .getSystemService(Context.AUDIO_SERVICE);
+            AudioManager am = (AudioManager) activity
+                .getSystemService(Context.AUDIO_SERVICE);
             String framesPerBuffer = am
-                    .getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+                .getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
             return Integer.parseInt(framesPerBuffer);
+        } else {
+            return 0;
         }
-        return 0;
     }
 
     public int getNativeAudioSampleRate() {
         return AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM);
-
     }
 }
