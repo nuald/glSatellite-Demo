@@ -14,21 +14,16 @@ Features:
 
 Shell commands:
 
-    $ cd google-play-services_lib/
-    $ android update project -p .
-    $ ant debug
-    $ cd ../v7-appcompat_lib/
-    $ android update project -p .
-    $ ant debug
-    $ cd ../glSatellite/
-    $ android update project -p .
-    $ ndk-build
-    $ ant debug install
+    $ gradle installDebug
 
 # References
 
 The Official Khronos WebGL Repository: https://github.com/KhronosGroup/WebGL
+
 Anton's OpenGL 4 Tutorials: http://antongerdelan.net/opengl/index.html
+
 NASA Earth textures: http://earthobservatory.nasa.gov/Features/BlueMarble/
+
 NORAD Two-Line Element Sets Current Data: http://www.celestrak.com/NORAD/elements/
+
 Real Time Satellite Tracking And Predictions: http://www.n2yo.com/
