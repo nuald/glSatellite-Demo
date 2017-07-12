@@ -1,9 +1,9 @@
 #pragma once
 
-#include "NDKHelper.h"
+#include "ndk_helper/NDKHelper.h"
 #include "SatelliteMgr.h"
 #include "IFileReader.h"
-#include "helper/tapCamera.h"
+#include "ndk_helper/tapCamera.h"
 
 enum SHADER_ATTRIBUTES {
     ATTRIB_VERTEX, ATTRIB_NORMAL, ATTRIB_UV,
@@ -53,7 +53,7 @@ class GlobeRenderer {
     ndk_helper::Mat4 mat_projection_;
     ndk_helper::Mat4 mat_view_;
     ndk_helper::Mat4 mat_model_;
-    helper::TapCamera* camera_;
+    ndk_helper::TapCamera* camera_;
 
     ndk_helper::Vec3 Coord2Vec3(float latitude, float longitude);
 
@@ -74,7 +74,7 @@ public:
         Unload();
     }
 
-    void Bind(helper::TapCamera* camera) {
+    void Bind(ndk_helper::TapCamera* camera) {
         camera_ = camera;
     }
 

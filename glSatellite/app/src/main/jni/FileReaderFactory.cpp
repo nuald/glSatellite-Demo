@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "NDKHelper.h"
+#include "ndk_helper/NDKHelper.h"
 #include "DebugUtils.h"
 #include "FileReaderFactory.h"
 

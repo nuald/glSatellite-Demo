@@ -18,12 +18,10 @@
 #include "DebugUtils.h"
 #include "gestureDetector.h"
 
-using namespace ndk_helper;
-
 //--------------------------------------------------------------------------------
 // gestureDetector.cpp
 //--------------------------------------------------------------------------------
-namespace helper {
+namespace ndk_helper {
 
 //--------------------------------------------------------------------------------
 // includes

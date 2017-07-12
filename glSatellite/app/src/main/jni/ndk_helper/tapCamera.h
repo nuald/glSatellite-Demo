@@ -23,7 +23,7 @@
 #include "vecmath.h"
 #include "interpolator.h"
 
-namespace helper {
+namespace ndk_helper {
 
 /******************************************************************
  * Camera control helper class with a tap gesture

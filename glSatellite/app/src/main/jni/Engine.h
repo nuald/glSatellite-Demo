@@ -2,9 +2,9 @@
 
 #include "GlobeRenderer.h"
 #include "MessageQueue.h"
-#include "helper/gestureDetector.h"
-#include "helper/tapCamera.h"
-#include "NDKHelper.h"
+#include "ndk_helper/gestureDetector.h"
+#include "ndk_helper/tapCamera.h"
+#include "ndk_helper/NDKHelper.h"
 
 class Engine {
     GlobeRenderer renderer_;
@@ -20,10 +20,10 @@ class Engine {
     ndk_helper::DoubletapDetector doubletap_detector_;
     ndk_helper::PinchDetector pinch_detector_;
     ndk_helper::DragDetector drag_detector_;
-    helper::TapDetector tap_detector_;
+    ndk_helper::TapDetector tap_detector_;
 
     ndk_helper::PerfMonitor monitor_;
-    helper::TapCamera tap_camera_;
+    ndk_helper::TapCamera tap_camera_;
 
     android_app *app_;
 

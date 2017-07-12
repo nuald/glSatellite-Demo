@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "Engine.h"
 #include "DebugUtils.h"
 #include "Satellite.h"

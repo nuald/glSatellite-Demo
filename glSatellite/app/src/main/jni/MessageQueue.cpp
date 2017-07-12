@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <cassert>
 
-#include "NDKHelper.h"
+#include "ndk_helper/NDKHelper.h"
 #include "MessageQueue.h"
 
 int MessageQueue::current_id_ = LOOPER_ID_USER;

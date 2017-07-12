@@ -23,9 +23,7 @@
 #include "NDKHelper.h"
 #include "tapCamera.h"
 
-using namespace ndk_helper;
-
-namespace helper {
+namespace ndk_helper {
 
 const float TRANSFORM_FACTOR = 15.f;
 const float TRANSFORM_FACTORZ = 10.f;
