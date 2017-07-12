@@ -6,11 +6,15 @@ import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+
+import java.util.Arrays;
 
 public class SettingsActivity extends Activity implements
     PreferenceFragment.OnPreferenceStartFragmentCallback {
@@ -19,6 +23,15 @@ public class SettingsActivity extends Activity implements
     public static final String PREF_URL = "prefUrl";
     public static final String PREF_TLE = "prefSatellite";
     static final String FMT = "http://www.celestrak.com/NORAD/elements/%s.txt";
+    private static final String PREF_SYNC = "pref_sync";
+    private static String[] PREF_DB = {
+        "pref_db_special",
+        "pref_db_earth",
+        "pref_db_comm",
+        "pref_db_nav",
+        "pref_db_sci",
+        "pref_db_misc"
+    };
 
     public static class SettingsFragment extends PreferenceFragment implements
             OnSharedPreferenceChangeListener {
@@ -39,6 +52,7 @@ public class SettingsActivity extends Activity implements
             String url = getUrl();
             EditTextPreference urlPref = (EditTextPreference)findPreference(PREF_URL);
             urlPref.setText(url);
+            urlPref.setSummary(url);
             SharedPreferences prefs = getPrefs();
             prefs.edit().putString(PREF_URL, url).apply();
             return url;
@@ -49,9 +63,10 @@ public class SettingsActivity extends Activity implements
             String url = getUrl();
             if (prefs.getString(PREF_URL, "").isEmpty()) {
                 updatePrefUrlValue();
+            } else {
+                Preference urlPref = findPreference(PREF_URL);
+                urlPref.setSummary(prefs.getString(PREF_URL, url));
             }
-            Preference urlPref = findPreference(PREF_URL);
-            urlPref.setSummary(prefs.getString(PREF_URL, url));
         }
 
         private String getUrl() {
@@ -73,8 +88,9 @@ public class SettingsActivity extends Activity implements
             final SharedPreferences prefs = getPrefs();
             Preference tlePref = findPreference(PREF_TLE);
             tlePref.setSummary(prefs.getString(PREF_TLE, DEFAULT));
-            // TODO: call only if pref has changed
-            updatePrefUrl();
+            if (prefs.getBoolean(PREF_SYNC, false)) {
+                updatePrefUrlValue();
+            }
             // Set up a listener whenever a key changes
             prefs.registerOnSharedPreferenceChangeListener(this);
         }
@@ -92,9 +108,11 @@ public class SettingsActivity extends Activity implements
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-            String value = prefs.getString(key, DEFAULT);
-            prefs.edit().putString(PREF_TLE, value).apply();
-            getFragmentManager().popBackStack();
+            if (Arrays.asList(PREF_DB).contains(key)) {
+                String value = prefs.getString(key, DEFAULT);
+                prefs.edit().putString(PREF_TLE, value).apply();
+                getFragmentManager().popBackStack();
+            }
         }
 
         @Override
@@ -110,6 +128,14 @@ public class SettingsActivity extends Activity implements
             super.onResume();
             // Set up a listener whenever a key changes
             final SharedPreferences sharedPrefs = getPreferenceScreen().getSharedPreferences();
+            final SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putBoolean(PREF_SYNC, false);
+            final CheckBoxPreference pref = (CheckBoxPreference)findPreference(PREF_SYNC);
+            pref.setChecked(false);
+            for (String key: PREF_DB) {
+                editor.putString(key, null);
+            }
+            editor.apply();
             sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         }
 
