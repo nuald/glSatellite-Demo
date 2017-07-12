@@ -11,8 +11,8 @@ import android.widget.RadioGroup;
 public class DbPickerPreference extends DialogPreference implements
         RadioGroup.OnCheckedChangeListener {
 
-    public static final String DEFAULT = "iridium";
-    String value_;
+    static final String DEFAULT = "iridium";
+    private String value_;
 
     public DbPickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -25,19 +25,18 @@ public class DbPickerPreference extends DialogPreference implements
         LayoutInflater inflater = (LayoutInflater)getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.pref, null);
-        RadioButton btn = (RadioButton)view.findViewWithTag(value_);
+        RadioButton btn = view.findViewWithTag(value_);
         if (btn != null) {
             btn.toggle();
         }
-        RadioGroup rGroup = (RadioGroup)view.findViewById(R.id.radiogrp_db);
+        RadioGroup rGroup = view.findViewById(R.id.radiogrp_db);
         rGroup.setOnCheckedChangeListener(this);
         return view;
     }
 
     @Override
     public void onCheckedChanged(RadioGroup rGroup, int checkedId) {
-        RadioButton checkedRadioButton = (RadioButton)rGroup
-                .findViewById(checkedId);
+        RadioButton checkedRadioButton = rGroup.findViewById(checkedId);
         boolean isChecked = checkedRadioButton.isChecked();
         if (isChecked) {
             value_ = (String)checkedRadioButton.getTag();

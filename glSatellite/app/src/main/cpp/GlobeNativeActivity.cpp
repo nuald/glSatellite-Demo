@@ -72,8 +72,6 @@ jclass RetrieveClass(JNIEnv *jni, ANativeActivity* activity,
  * event loop for receiving input events and doing other things.
  */
 void android_main(android_app *state) {
-    app_dummy();
-
     g_engine.SetState(state);
 
     //Init helper functions

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <vector>
 
 #include "ndk_helper/NDKHelper.h"
@@ -63,13 +62,16 @@ public:
     }
 };
 
-unique_ptr<IFileReader> FileReaderFactory::Get(READER_TYPE type,
-    const string& path) {
-
+unique_ptr<IFileReader> FileReaderFactory::Get(READER_TYPE type, const string& path) {
     switch (type) {
-    case SYS:
-        return unique_ptr < IFileReader > (new SysFileReader(path));
-    case APP:
-        return unique_ptr < IFileReader > (new AppFileReader(path));
+        case SYS:
+            return unique_ptr < IFileReader > (new SysFileReader(path));
+        case APP:
+            return unique_ptr < IFileReader > (new AppFileReader(path));
+        default:
+            if (g_developer_mode) {
+                LOGI("Unknown file reader: %d", type);
+            }
+            return nullptr;
     }
 }

@@ -37,7 +37,7 @@ public class SettingsActivity extends Activity {
             EditTextPreference urlPref = (EditTextPreference)findPreference(PREF_URL);
             urlPref.setText(url);
             SharedPreferences prefs = getPrefs();
-            prefs.edit().putString(PREF_URL, url).commit();
+            prefs.edit().putString(PREF_URL, url).apply();
             return url;
         }
 
@@ -91,7 +91,9 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment()).commit();
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override

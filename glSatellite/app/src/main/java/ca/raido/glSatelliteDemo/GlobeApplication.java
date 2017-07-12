@@ -1,10 +1,7 @@
 package ca.raido.glSatelliteDemo;
 
 import android.app.Application;
-import android.content.Context;
-import android.os.StrictMode;
 import android.util.Log;
-import ca.raido.helper.NDKHelper;
 
 public class GlobeApplication extends Application {
     public static final boolean DEVELOPER_MODE = false;

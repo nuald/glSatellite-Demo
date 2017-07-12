@@ -357,7 +357,7 @@ void GlobeRenderer::Unload() {
 
 }
 
-void GlobeRenderer::Update(float fTime) {
+void GlobeRenderer::Update(double fTime) {
     camera_->Update();
     Mat4 mat_tranform = camera_->GetTransformMatrix();
     float cam_z = mat_tranform.Ptr()[14];

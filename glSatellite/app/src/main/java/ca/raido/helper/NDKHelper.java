@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.content.Context;

@@ -82,14 +82,14 @@ public class GlobeNativeActivity extends NativeActivity {
                 // Download the file
                 input = new BufferedInputStream(urlConnection.getInputStream());
                 output = new FileOutputStream(file);
-                int lenghtOfFile = urlConnection.getContentLength();
+                int lengthOfFile = urlConnection.getContentLength();
 
                 byte data[] = new byte[1024];
-                int total = 0, count = 0;
+                int total = 0, count;
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    int progress = total * 100 / lenghtOfFile;
+                    int progress = total * 100 / lengthOfFile;
                     setProgressBarPosition(progress);
                     // writing data to file
                     output.write(data, 0, count);
@@ -142,7 +142,7 @@ public class GlobeNativeActivity extends NativeActivity {
             String tle = prefs.getString(SettingsActivity.PREF_TLE,
                 DbPickerPreference.DEFAULT);
             url_ = String.format(SettingsActivity.FMT, tle);
-            prefs.edit().putString(SettingsActivity.PREF_URL, url_).commit();
+            prefs.edit().putString(SettingsActivity.PREF_URL, url_).apply();
         }
 
         new Thread(new Runnable() {
@@ -226,12 +226,10 @@ public class GlobeNativeActivity extends NativeActivity {
                 activity.setContentView(_mainLayout, params);
 
                 // Show our UI over NativeActivity window
-                _popupWindow.showAtLocation(_mainLayout, Gravity.BOTTOM
-                    | Gravity.LEFT, 0, 0);
+                _popupWindow.showAtLocation(_mainLayout, Gravity.BOTTOM | Gravity.START, 0, 0);
 
-                _label = (TextView)popupView.findViewById(R.id.textViewFPS);
-                _progressBar = (ProgressBar)popupView
-                        .findViewById(R.id.progressBar);
+                _label = popupView.findViewById(R.id.textViewFPS);
+                _progressBar = popupView.findViewById(R.id.progressBar);
 
                 ShowAds();
             }
@@ -284,7 +282,7 @@ public class GlobeNativeActivity extends NativeActivity {
             @Override
             public void run() {
                 Resources res = getResources();
-                String result = null;
+                String result;
                 if (label == null) {
                     if (usedUrl_ == null) {
                         result = String.format(Locale.getDefault(),
@@ -321,7 +319,7 @@ public class GlobeNativeActivity extends NativeActivity {
                     height);
 
                 // Look up the AdView as a resource and load a request.
-                AdView adView = (AdView)popupView.findViewById(R.id.adView);
+                AdView adView = popupView.findViewById(R.id.adView);
                 AdRequest adRequest = new AdRequest.Builder().addTestDevice(
                     AdRequest.DEVICE_ID_EMULATOR).build();
                 adView.loadAd(adRequest);

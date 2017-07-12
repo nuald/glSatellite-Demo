@@ -36,7 +36,7 @@ class Engine {
     void ShowError(const char *error);
     void ShowAds();
     void UseTle(char *path);
-    void ShowBeam(long num);
+    void ShowBeam(size_t num);
     void TransformPosition(ndk_helper::Vec2 &vec);
 
 public:

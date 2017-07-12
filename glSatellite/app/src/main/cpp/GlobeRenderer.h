@@ -81,7 +81,7 @@ public:
     void InitSatelliteMgr(IFileReader& reader);
     void Init();
     void Render();
-    void Update(float dTime);
+    void Update(double dTime);
     void Unload();
     void UpdateViewport();
     void RequestRead(const ndk_helper::Vec2& v);
@@ -91,7 +91,7 @@ public:
     bool IsZoomOutEnabled() {
         return zoom_out_enabled_;
     }
-    Satellite &GetSatellite(int num) {
+    Satellite &GetSatellite(size_t num) {
         return mgr_.GetSatellite(num);
     }
 };

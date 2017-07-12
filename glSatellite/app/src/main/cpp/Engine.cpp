@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include "Engine.h"
 #include "DebugUtils.h"
-#include "Satellite.h"
 #include "FileReaderFactory.h"
-#include "MessageQueue.h"
 
 using namespace ndk_helper;
 
@@ -186,39 +184,29 @@ void Engine::InitWindow() {
  */
 void Engine::HandleCmd(android_app *app, int32_t cmd) {
     auto engine = (Engine*)app->userData;
-    switch (cmd) {
-    case APP_CMD_SAVE_STATE:
-        break;
-    case APP_CMD_INIT_WINDOW:
+    if (cmd == APP_CMD_INIT_WINDOW) {
         // The window is being shown, get it ready.
         if (app->window) {
             engine->InitWindow();
         }
-        break;
-    case APP_CMD_TERM_WINDOW:
+    } else if (cmd == APP_CMD_TERM_WINDOW) {
         // The window is being hidden or closed, clean it up.
         engine->TermDisplay();
         engine->has_focus_ = false;
-        break;
-    case APP_CMD_STOP:
-        break;
-    case APP_CMD_GAINED_FOCUS:
+    } else if (cmd == APP_CMD_GAINED_FOCUS) {
         engine->ResumeSensors();
         //Start animation
         engine->has_focus_ = true;
-        break;
-    case APP_CMD_LOST_FOCUS:
+    } else if (cmd == APP_CMD_LOST_FOCUS) {
         engine->SuspendSensors();
         // Also stop animating.
         engine->has_focus_ = false;
         if (engine->no_error_) {
             engine->DrawFrame();
         }
-        break;
-    case APP_CMD_LOW_MEMORY:
+    } else if (cmd == APP_CMD_LOW_MEMORY) {
         //Free up GL resources
         engine->TrimMemory();
-        break;
     }
 }
 
@@ -226,7 +214,7 @@ void Engine::HandleCmd(android_app *app, int32_t cmd) {
 //Sensor handlers
 //-------------------------------------------------------------------------
 void Engine::InitSensors() {
-    sensor_manager_ = ASensorManager_getInstance();
+    sensor_manager_ = ndk_helper::AcquireASensorManagerInstance(app_);
     accelerometer_sensor_ = ASensorManager_getDefaultSensor(sensor_manager_,
         ASENSOR_TYPE_ACCELEROMETER);
     sensor_event_queue_ = ASensorManager_createEventQueue(sensor_manager_,
@@ -352,7 +340,7 @@ void Engine::UseTle(char *path) {
     free(path);
 }
 
-void Engine::ShowBeam(long num) {
+void Engine::ShowBeam(size_t num) {
     JNIEnv *jni;
     app_->activity->vm->AttachCurrentThread(&jni, nullptr);
 
@@ -370,15 +358,12 @@ void Engine::ShowBeam(long num) {
 }
 
 void Engine::HandleMessage(Message msg) {
-    switch (msg.cmd) {
-    case SHOW_ADS:
+    auto cmd = msg.cmd;
+    if (cmd == SHOW_ADS) {
         ShowAds();
-        break;
-    case USE_TLE:
+    } else if (cmd == USE_TLE) {
         UseTle(reinterpret_cast<char*>(msg.payload));
-        break;
-    case SHOW_BEAM:
-        ShowBeam(reinterpret_cast<long>(msg.payload));
-        break;
+    } else if (cmd == SHOW_BEAM) {
+        ShowBeam(reinterpret_cast<size_t>(msg.payload));
     }
 }
