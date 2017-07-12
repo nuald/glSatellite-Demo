@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">glSatellite Demo</string>
     <string name="settings">Settings</string>
@@ -5,62 +6,127 @@
     <string name="format_fail">Downloading failed for %1$s</string>
     <string name="format_default">FPS: %1$2.0f Offline Iridium TLE</string>
     <string name="format_info">%1$s (%2$d)\nLAT: %3$f LON: %4$f\nALT: %5$f</string>
+    <string name="title_other">Other</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_title_db">Satellites</string>
     <string name="pref_url_title">TLE fetch URL</string>
 
-    <string name="pref_title_db_special"><b><u>SPECIAL INTEREST</u></b></string>
-    <string name="title_tle_new">Last 30 Days Launches</string>
-    <string name="title_stations">Space Stations</string>
-    <string name="title_visual">100 (or so) Brightest</string>
-    <string name="title_1999_025">FENGYUN 1C Debris</string>
-    <string name="title_iridium_33_debris">IRIDIUM 33 Debris</string>
-    <string name="title_cosmos_2251_debris">COSMOS 2251 Debris</string>
-    <string name="title_2012_044">BREEZE&#8211;M R/B Breakup (2012&#8211;044C)</string>
+    <string name="pref_title_db_special">Special Interest</string>
+    <string-array name="db_special_entries">
+        <item>Last 30 Days Launches</item>
+        <item>Space Stations</item>
+        <item>100 (or so) Brightest</item>
+        <item>FENGYUN 1C Debris</item>
+        <item>IRIDIUM 33 Debris</item>
+        <item>COSMOS 2251 Debris</item>
+        <item>BREEZE&#8211;M R/B Breakup (2012&#8211;044C)</item>
+    </string-array>
+    <string-array name="db_special_values">
+        <item>tle-new</item>
+        <item>stations</item>
+        <item>visual</item>
+        <item>1999-025</item>
+        <item>iridium-33-debris</item>
+        <item>cosmos-2251-debris</item>
+        <item>2012-044</item>
+    </string-array>
 
-    <string name="pref_title_db_earth"><b><u>WEATHER &amp; EARTH RESOURCES</u></b></string>
-    <string name="title_weather">Weather</string>
-    <string name="title_noaa">NOAA</string>
-    <string name="title_goes">GOES</string>
-    <string name="title_resource">Earth Resources</string>
-    <string name="title_sarsat">Search &amp; Rescue (SARSAT)</string>
-    <string name="title_dmc">Disaster Monitoring</string>
-    <string name="title_tdrss">Tracking and Data Relay Satellite System (TDRSS)</string>
-    <string name="title_argos">ARGOS Data Collection System</string>
+    <string name="pref_title_db_earth">Weather &amp; Earth Resources</string>
+    <string-array name="db_earth_entries">
+        <item>Weather</item>
+        <item>NOAA</item>
+        <item>GOES</item>
+        <item>Earth Resources</item>
+        <item>Search &amp; Rescue (SARSAT)</item>
+        <item>Disaster Monitoring</item>
+        <item>Tracking and Data Relay Satellite System (TDRSS)</item>
+        <item>ARGOS Data Collection System</item>
+    </string-array>
+    <string-array name="db_earth_values">
+        <item>weather</item>
+        <item>noaa</item>
+        <item>goes</item>
+        <item>resource</item>
+        <item>sarsat</item>
+        <item>dmc</item>
+        <item>tdrss</item>
+        <item>argos</item>
+    </string-array>
 
-    <string name="pref_title_db_comm"><b><u>COMMUNICATIONS</u></b></string>
-    <string name="title_geo">Geostationary</string>
-    <string name="title_intelsat">Intelsat</string>
-    <string name="title_gorizont">Gorizont</string>
-    <string name="title_raduga">Raduga</string>
-    <string name="title_molniya">Molniya</string>
-    <string name="title_iridium">Iridium</string>
-    <string name="title_orbcomm">Orbcomm</string>
-    <string name="title_globalstar">Globalstar</string>
-    <string name="title_amateur">Amateur Radio</string>
-    <string name="title_x_comm">Experimental</string>
-    <string name="title_other_comm">Other</string>
+    <string name="pref_title_db_comm">Communications</string>
+    <string-array name="db_comm_entries">
+        <item>Geostationary</item>
+        <item>Intelsat</item>
+        <item>Gorizont</item>
+        <item>Raduga</item>
+        <item>Molniya</item>
+        <item>Iridium</item>
+        <item>Orbcomm</item>
+        <item>Globalstar</item>
+        <item>Amateur Radio</item>
+        <item>Experimental</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="db_comm_values">
+        <item>geo</item>
+        <item>intelsat</item>
+        <item>gorizont</item>
+        <item>raduga</item>
+        <item>molniya</item>
+        <item>iridium</item>
+        <item>orbcomm</item>
+        <item>globalstar</item>
+        <item>amateur</item>
+        <item>x-comm</item>
+        <item>other-comm</item>
+    </string-array>
 
-    <string name="pref_title_db_nav"><b><u>NAVIGATION</u></b></string>
-    <string name="title_gps_ops">GPS Operational</string>
-    <string name="title_glo_ops">Glonass Operational</string>
-    <string name="title_galileo">Galileo</string>
-    <string name="title_beidou">Beidou</string>
-    <string name="title_sbas">Satellite-Based Augmentation System (WAAS/EGNOS/MSAS)</string>
-    <string name="title_nnss">Navy Navigation Satellite System (NNSS)</string>
-    <string name="title_musson">Russian LEO Navigation</string>
+    <string name="pref_title_db_nav">Navigation</string>
+    <string-array name="db_nav_entries">
+        <item>GPS Operational</item>
+        <item>Glonass Operational</item>
+        <item>Galileo</item>
+        <item>Beidou</item>
+        <item>Satellite-Based Augmentation System (WAAS/EGNOS/MSAS)</item>
+        <item>Navy Navigation Satellite System (NNSS)</item>
+        <item>Russian LEO Navigation</item>
+    </string-array>
+    <string-array name="db_nav_values">
+        <item>gps-ops</item>
+        <item>glo-ops</item>
+        <item>galileo</item>
+        <item>beidou</item>
+        <item>sbas</item>
+        <item>nnss</item>
+        <item>musson</item>
+    </string-array>
 
-    <string name="pref_title_db_sci"><b><u>SCIENTIFIC</u></b></string>
-    <string name="title_science">Space &amp; Earth Science</string>
-    <string name="title_geodetic">Geodetic</string>
-    <string name="title_engineering">Engineering</string>
-    <string name="title_education">Education</string>
+    <string name="pref_title_db_sci">Scientific</string>
+    <string-array name="db_sci_entries">
+        <item>Space &amp; Earth Science</item>
+        <item>Geodetic</item>
+        <item>Engineering</item>
+        <item>Education</item>
+    </string-array>
+    <string-array name="db_sci_values">
+        <item>science</item>
+        <item>geodetic</item>
+        <item>engineering</item>
+        <item>education</item>
+    </string-array>
 
-    <string name="pref_title_db_misc"><b><u>MISCELLANEOUS</u></b></string>
-    <string name="title_military">Miscellaneous Military</string>
-    <string name="title_radar">Radar Calibration</string>
-    <string name="title_cubesats">CubeSats</string>
-    <string name="title_other">Other</string>
-
+    <string name="pref_title_db_misc">Miscellaneous</string>
+    <string-array name="db_misc_entries">
+        <item>Miscellaneous Military</item>
+        <item>Radar Calibration</item>
+        <item>CubeSats</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="db_misc_values">
+        <item>military</item>
+        <item>radar</item>
+        <item>cubesats</item>
+        <item>other</item>
+    </string-array>
 </resources>

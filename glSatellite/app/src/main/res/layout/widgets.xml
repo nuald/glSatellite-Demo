@@ -27,7 +27,7 @@
             android:id="@+id/textViewFPS"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/title_other"
             android:textColor="@android:color/white" />
 

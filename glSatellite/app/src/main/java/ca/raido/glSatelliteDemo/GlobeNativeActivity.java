@@ -37,10 +37,10 @@ import com.google.android.gms.ads.AdView;
 
 public class GlobeNativeActivity extends NativeActivity {
 
-    String url_;
-    String usedUrl_;
-    float fps_;
-    Date dt_;
+    private String url_;
+    private String usedUrl_;
+    private float fps_;
+    private Date dt_;
 
     private void setProgressBarPosition(final int progress) {
         if (_progressBar != null) {
@@ -139,8 +139,7 @@ public class GlobeNativeActivity extends NativeActivity {
                 .getDefaultSharedPreferences(this);
         url_ = prefs.getString(SettingsActivity.PREF_URL, "");
         if (url_.isEmpty()) {
-            String tle = prefs.getString(SettingsActivity.PREF_TLE,
-                DbPickerPreference.DEFAULT);
+            String tle = prefs.getString(SettingsActivity.PREF_TLE, SettingsActivity.DEFAULT);
             url_ = String.format(SettingsActivity.FMT, tle);
             prefs.edit().putString(SettingsActivity.PREF_URL, url_).apply();
         }

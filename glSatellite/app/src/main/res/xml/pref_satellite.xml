@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference android:title="@string/pref_title_db_special"
+                    android:key="pref_db_special"
+                    android:entries="@array/db_special_entries"
+                    android:entryValues="@array/db_special_values" />
+
+    <ListPreference android:title="@string/pref_title_db_earth"
+                    android:key="pref_db_earth"
+                    android:entries="@array/db_earth_entries"
+                    android:entryValues="@array/db_earth_values"/>
+
+    <ListPreference android:title="@string/pref_title_db_comm"
+                    android:key="pref_db_comm"
+                    android:entries="@array/db_comm_entries"
+                    android:entryValues="@array/db_comm_values" />
+
+    <ListPreference android:title="@string/pref_title_db_nav"
+                    android:key="pref_db_nav"
+                    android:entries="@array/db_nav_entries"
+                    android:entryValues="@array/db_nav_values" />
+
+    <ListPreference android:title="@string/pref_title_db_sci"
+                    android:key="pref_db_sci"
+                    android:entries="@array/db_sci_entries"
+                    android:entryValues="@array/db_sci_values" />
+
+    <ListPreference android:title="@string/pref_title_db_misc"
+                    android:key="pref_db_misc"
+                    android:entries="@array/db_misc_entries"
+                    android:entryValues="@array/db_misc_values" />
+</PreferenceScreen>

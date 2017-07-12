@@ -1,14 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <EditTextPreference
         android:key="prefUrl"
         android:persistent="true"
+        android:selectAllOnFocus="true"
         android:title="@string/pref_url_title" />
 
-    <ca.raido.glSatelliteDemo.DbPickerPreference
-        android:defaultValue="iridium"
+    <Preference
         android:key="prefSatellite"
         android:persistent="true"
+        android:widgetLayout="@layout/pref_group"
+        android:fragment="ca.raido.glSatelliteDemo.SettingsActivity$Satellite"
         android:title="@string/pref_title_db" />
 
 </PreferenceScreen>
