@@ -10,7 +10,13 @@ android {
         targetSdkVersion 26
 
         ndk {
-            moduleName "GlobeNativeActivity"
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a','x86', 'x86_64'
+        }
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_PLATFORM=android-14',
+                        '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static'
+            }
         }
     }
 
@@ -21,13 +27,17 @@ android {
         }
     }
     externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
         }
     }
 }
 
+repositories {
+    maven { url "https://maven.google.com" }
+}
+
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.android.support:appcompat-v7:26.0.0-beta2'
+    compile 'com.google.android.gms:play-services-ads:11.0.2'
 }
