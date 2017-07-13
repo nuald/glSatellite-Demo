@@ -1,4 +1,7 @@
+def VERIFICATION_GROUP = 'Verification'
+
 apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
 
 android {
     compileSdkVersion 26
@@ -40,4 +43,21 @@ repositories {
 dependencies {
     compile 'com.android.support:appcompat-v7:26.0.0-beta2'
     compile 'com.google.android.gms:play-services-ads:11.0.2'
+}
+
+task checkstyle(type: Checkstyle) {
+    group VERIFICATION_GROUP
+    description 'Checks the style of Java sources.'
+
+    showViolations = true
+    configFile file("checkstyle.xml")
+
+    source 'src/main/java'
+    include '**/*.java'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+
+    // empty classpath
+    classpath = files()
 }

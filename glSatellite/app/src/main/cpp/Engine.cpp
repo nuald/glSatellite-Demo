@@ -325,7 +325,7 @@ void Engine::ShowAds() {
 
     //Default class retrieval
     auto clazz = jni->GetObjectClass(app_->activity->clazz);
-    auto methodID = jni->GetMethodID(clazz, "showAds", "()V");
+    auto methodID = jni->GetMethodID(clazz, "showAdsImpl", "()V");
     jni->CallVoidMethod(app_->activity->clazz, methodID);
 
     app_->activity->vm->DetachCurrentThread();

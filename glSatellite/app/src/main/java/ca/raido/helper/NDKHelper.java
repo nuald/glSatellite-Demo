@@ -16,11 +16,6 @@
 
 package ca.raido.helper;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import javax.microedition.khronos.opengles.GL10;
-
 import android.annotation.TargetApi;
 import android.app.NativeActivity;
 import android.content.Context;
@@ -35,6 +30,12 @@ import android.opengl.GLUtils;
 import android.os.Build;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+
+import javax.microedition.khronos.opengles.GL10;
+
 public class NDKHelper {
 
     private NativeActivity activity;
@@ -44,7 +45,7 @@ public class NDKHelper {
     }
 
     public boolean isDeveloperMode() {
-        ApplicationInfo ai = activity.getApplicationInfo();
+        final ApplicationInfo ai = activity.getApplicationInfo();
         return (ai.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
@@ -56,21 +57,22 @@ public class NDKHelper {
     @SuppressWarnings("static-method")
     private int nextPOT(int i) {
         int pot = 1;
-        while (pot < i)
+        while (pot < i) {
             pot <<= 1;
+        }
         return pot;
     }
 
     @SuppressWarnings("static-method")
-    private Bitmap scaleBitmap(Bitmap bitmapToScale, float newWidth,
-            float newHeight) {
-        if (bitmapToScale == null)
+    private Bitmap scaleBitmap(Bitmap bitmapToScale, float newWidth, float newHeight) {
+        if (bitmapToScale == null) {
             return null;
+        }
         // get the original width and height
-        int width = bitmapToScale.getWidth();
-        int height = bitmapToScale.getHeight();
+        final int width = bitmapToScale.getWidth();
+        final int height = bitmapToScale.getHeight();
         // create a matrix for the manipulation
-        Matrix matrix = new Matrix();
+        final Matrix matrix = new Matrix();
 
         // resize the bit map
         matrix.postScale(newWidth / width, newHeight / height);
@@ -80,51 +82,35 @@ public class NDKHelper {
             bitmapToScale.getWidth(), bitmapToScale.getHeight(), matrix, true);
     }
 
-    public class TextureInformation {
-        boolean ret;
-        boolean alphaChannel;
-        int originalWidth;
-        int originalHeight;
-        Object image;
-    }
-
     public Object loadTexture(String path) {
-        Bitmap bitmap = null;
-        TextureInformation info = new TextureInformation();
+        final Bitmap bitmap;
+        final TextureInformation info = new TextureInformation();
         try {
             String str = path;
             if (!path.startsWith("/")) {
                 str = "/" + path;
             }
 
-            File file = new File(activity.getExternalFilesDir(null), str);
+            final File file = new File(activity.getExternalFilesDir(null), str);
             if (file.canRead()) {
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
             } else {
-                bitmap = BitmapFactory.decodeStream(activity.getResources()
-                    .getAssets().open(path));
+                final InputStream stream = activity.getResources().getAssets().open(path);
+                bitmap = BitmapFactory.decodeStream(stream);
             }
-            // Matrix matrix = new Matrix();
-            // // resize the bit map
-            // matrix.postScale(-1F, 1F);
-            //
-            // // recreate the new Bitmap and set it back
-            // bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-            // bitmap.getHeight(), matrix, true);
-
         } catch (Exception e) {
-            Log.w("NDKHelper", "Coundn't load a file:" + path);
+            Log.w("NDKHelper", "Could not load a file:" + path);
             info.ret = false;
             return info;
         }
 
         if (bitmap != null) {
             GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+            info.ret = true;
+            info.alphaChannel = bitmap.hasAlpha();
+            info.originalWidth = getBitmapWidth(bitmap);
+            info.originalHeight = getBitmapHeight(bitmap);
         }
-        info.ret = true;
-        info.alphaChannel = bitmap.hasAlpha();
-        info.originalWidth = getBitmapWidth(bitmap);
-        info.originalHeight = getBitmapHeight(bitmap);
 
         return info;
     }
@@ -135,10 +121,10 @@ public class NDKHelper {
             bitmap = BitmapFactory.decodeStream(activity.getResources()
                     .getAssets().open(path));
             if (iScalePOT) {
-                int originalWidth = getBitmapWidth(bitmap);
-                int originalHeight = getBitmapHeight(bitmap);
-                int width = nextPOT(originalWidth);
-                int height = nextPOT(originalHeight);
+                final int originalWidth = getBitmapWidth(bitmap);
+                final int originalHeight = getBitmapHeight(bitmap);
+                final int width = nextPOT(originalWidth);
+                final int height = nextPOT(originalHeight);
                 if (originalWidth != width || originalHeight != height) {
                     // Scale it
                     bitmap = scaleBitmap(bitmap, width, height);
@@ -161,8 +147,8 @@ public class NDKHelper {
     }
 
     public void getBitmapPixels(Bitmap bmp, int[] pixels) {
-        int w = bmp.getWidth();
-        int h = bmp.getHeight();
+        final int w = bmp.getWidth();
+        final int h = bmp.getHeight();
         bmp.getPixels(pixels, 0, w, 0, 0, w, h);
     }
 
@@ -171,7 +157,7 @@ public class NDKHelper {
     }
 
     public String getNativeLibraryDirectory(Context appContext) {
-        ApplicationInfo ai = activity.getApplicationInfo();
+        final ApplicationInfo ai = activity.getApplicationInfo();
 
         Log.w("NDKHelper", "ai.nativeLibraryDir:" + ai.nativeLibraryDir);
 
@@ -184,25 +170,19 @@ public class NDKHelper {
 
     public String getApplicationName() {
         final PackageManager pm = activity.getPackageManager();
-        ApplicationInfo ai;
         try {
-            ai = pm.getApplicationInfo(activity.getPackageName(), 0);
+            final ApplicationInfo ai = pm.getApplicationInfo(activity.getPackageName(), 0);
+            return (String) pm.getApplicationLabel(ai);
         } catch (final PackageManager.NameNotFoundException e) {
-            ai = null;
+            return "(unknown)";
         }
-        String applicationName = (String) (ai != null ? pm
-            .getApplicationLabel(ai) : "(unknown)");
-        return applicationName;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public int getNativeAudioBufferSize() {
-        int SDK_INT = android.os.Build.VERSION.SDK_INT;
-        if (SDK_INT >= 17) {
-            AudioManager am = (AudioManager) activity
-                .getSystemService(Context.AUDIO_SERVICE);
-            String framesPerBuffer = am
-                .getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        if (Build.VERSION.SDK_INT >= 17) {
+            final AudioManager am = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
+            final String framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
             return Integer.parseInt(framesPerBuffer);
         } else {
             return 0;
@@ -211,5 +191,13 @@ public class NDKHelper {
 
     public int getNativeAudioSampleRate() {
         return AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_SYSTEM);
+    }
+
+    public class TextureInformation {
+        boolean ret;
+        boolean alphaChannel;
+        int originalWidth;
+        int originalHeight;
+        Object image;
     }
 }

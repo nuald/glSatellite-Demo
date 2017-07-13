@@ -19,14 +19,13 @@ void HandleMessageWrapper(android_app* app, android_poll_source* source) {
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_ShowAds(
-        JNIEnv *env, jobject thiz) {
+Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_showAds(JNIEnv *env, jobject thiz) {
     Message msg = {SHOW_ADS, 0};
     PostMessage(msg);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_UseTle(
+Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_useTle(
         JNIEnv *env, jobject thiz, jstring javaString) {
     const char *nativeString = env->GetStringUTFChars(javaString, 0);
     size_t len = strlen(nativeString);

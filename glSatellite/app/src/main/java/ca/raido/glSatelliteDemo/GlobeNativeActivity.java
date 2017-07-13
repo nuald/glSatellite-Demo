@@ -1,18 +1,5 @@
 package ca.raido.glSatelliteDemo;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-import java.util.Locale;
-
 import android.app.NativeActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -35,19 +23,39 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
+import java.util.Locale;
+
 public class GlobeNativeActivity extends NativeActivity {
 
-    private String url_;
-    private String usedUrl_;
-    private float fps_;
-    private Date dt_;
+    static final int LENGTH = 12;
+
+    private String mUrl;
+    private String mUsedUrl;
+    private float mFps;
+    private Date mDt;
+
+    private LinearLayout mMainLayout;
+    private PopupWindow mPopupWindow;
+    private PopupWindow mAdsWindow;
+    private TextView mLabel;
+    private ProgressBar mProgressBar;
 
     private void setProgressBarPosition(final int progress) {
-        if (_progressBar != null) {
+        if (mProgressBar != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    _progressBar.setProgress(progress);
+                    mProgressBar.setProgress(progress);
                 }
             });
         }
@@ -67,8 +75,8 @@ public class GlobeNativeActivity extends NativeActivity {
         String etag = null;
         long dt = 0;
         try {
-            URL url = new URL(url_);
-            urlConnection = (HttpURLConnection)url.openConnection();
+            final URL url = new URL(mUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
             // Read meta-data
             etag = urlConnection.getHeaderField("ETag");
             if (etag == null) {
@@ -76,20 +84,21 @@ public class GlobeNativeActivity extends NativeActivity {
             }
             etag = etag.replaceAll("[\":/\\\\]", "");
             dt = urlConnection.getHeaderFieldDate("Last-Modified", 0);
-            File file = new File(getExternalFilesDir(null), etag);
+            final File file = new File(getExternalFilesDir(null), etag);
             // Etag is unique, hence if file exists do not download
             if (!file.exists()) {
                 // Download the file
                 input = new BufferedInputStream(urlConnection.getInputStream());
                 output = new FileOutputStream(file);
-                int lengthOfFile = urlConnection.getContentLength();
+                final int lengthOfFile = urlConnection.getContentLength();
 
-                byte data[] = new byte[1024];
-                int total = 0, count;
+                final byte[] data = new byte[1024];
+                int total = 0;
+                int count;
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
-                    int progress = total * 100 / lengthOfFile;
+                    final int progress = total * 100 / lengthOfFile;
                     setProgressBarPosition(progress);
                     // writing data to file
                     output.write(data, 0, count);
@@ -98,12 +107,6 @@ public class GlobeNativeActivity extends NativeActivity {
                 // flushing output
                 output.flush();
             }
-        } catch (MalformedURLException e) {
-            logException(e);
-            return false;
-        } catch (FileNotFoundException e) {
-            logException(e);
-            return false;
         } catch (IOException e) {
             logException(e);
             return false;
@@ -125,9 +128,9 @@ public class GlobeNativeActivity extends NativeActivity {
             }
         }
         setProgressBarPosition(0);
-        dt_ = new Date(dt);
-        usedUrl_ = url_;
-        UseTle(etag);
+        mDt = new Date(dt);
+        mUsedUrl = mUrl;
+        useTle(etag);
         return true;
     }
 
@@ -135,22 +138,21 @@ public class GlobeNativeActivity extends NativeActivity {
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        url_ = prefs.getString(SettingsActivity.PREF_URL, "");
-        if (url_.isEmpty()) {
-            String tle = prefs.getString(SettingsActivity.PREF_TLE, SettingsActivity.DEFAULT);
-            url_ = String.format(SettingsActivity.FMT, tle);
-            prefs.edit().putString(SettingsActivity.PREF_URL, url_).apply();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mUrl = prefs.getString(SettingsActivity.PREF_URL, "");
+        if (mUrl.isEmpty()) {
+            final String tle = prefs.getString(SettingsActivity.PREF_TLE, SettingsActivity.DEFAULT);
+            mUrl = String.format(SettingsActivity.FMT, tle);
+            prefs.edit().putString(SettingsActivity.PREF_URL, mUrl).apply();
         }
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (!downloadFile()) {
-                    Resources res = getResources();
+                    final Resources res = getResources();
                     showToast(String.format(
-                        res.getString(R.string.format_fail), url_));
+                        res.getString(R.string.format_fail), mUrl));
                 }
             }
         }).start();
@@ -166,9 +168,11 @@ public class GlobeNativeActivity extends NativeActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.settings:
-            runSettings(null);
-            break;
+            case R.id.settings:
+                runSettings(null);
+                break;
+            default:
+                // pass
         }
         return super.onOptionsItemSelected(item);
     }
@@ -177,18 +181,13 @@ public class GlobeNativeActivity extends NativeActivity {
         System.loadLibrary("GlobeNativeActivity");
     }
 
-    native void ShowAds();
-    native void UseTle(String path);
+    native void showAds();
 
-    LinearLayout _mainLayout;
-    PopupWindow _popupWindow;
-    PopupWindow _adsWindow;
-    TextView _label;
-    ProgressBar _progressBar;
+    native void useTle(String path);
 
     private int getStatusBarHeight() {
         int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height",
+        final int resourceId = getResources().getIdentifier("status_bar_height",
             "dimen", "android");
         if (resourceId > 0) {
             result = getResources().getDimensionPixelSize(resourceId);
@@ -197,13 +196,13 @@ public class GlobeNativeActivity extends NativeActivity {
     }
 
     private View inflateView(int id) {
-        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext()
+        final LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
                 .getSystemService(LAYOUT_INFLATER_SERVICE);
         return layoutInflater.inflate(id, null);
     }
 
     public void showUI() {
-        if (_popupWindow != null) {
+        if (mPopupWindow != null) {
             return;
         }
 
@@ -212,57 +211,57 @@ public class GlobeNativeActivity extends NativeActivity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                View popupView = inflateView(R.layout.widgets);
-                _popupWindow = new PopupWindow(popupView,
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+                final View popupView = inflateView(R.layout.widgets);
+                mPopupWindow = new PopupWindow(popupView,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                _mainLayout = new LinearLayout(activity);
-                MarginLayoutParams params = new MarginLayoutParams(
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+                mMainLayout = new LinearLayout(activity);
+                final MarginLayoutParams params = new MarginLayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(0, 0, 0, 0);
-                activity.setContentView(_mainLayout, params);
+                activity.setContentView(mMainLayout, params);
 
                 // Show our UI over NativeActivity window
-                _popupWindow.showAtLocation(_mainLayout, Gravity.BOTTOM | Gravity.START, 0, 0);
+                mPopupWindow.showAtLocation(mMainLayout, Gravity.BOTTOM | Gravity.START, 0, 0);
 
-                _label = popupView.findViewById(R.id.textViewFPS);
-                _progressBar = popupView.findViewById(R.id.progressBar);
+                mLabel = popupView.findViewById(R.id.textViewFPS);
+                mProgressBar = popupView.findViewById(R.id.progressBar);
 
-                ShowAds();
+                showAds();
             }
         });
     }
 
     public void runSettings(View view) {
-        Intent settings = new Intent(this, SettingsActivity.class);
+        final Intent settings = new Intent(this, SettingsActivity.class);
         startActivity(settings);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (_popupWindow != null) {
-            _popupWindow.dismiss();
-            _popupWindow = null;
+
+        if (mPopupWindow != null) {
+            mPopupWindow.dismiss();
+            mPopupWindow = null;
         }
-        if (_adsWindow != null) {
-            _adsWindow.dismiss();
-            _adsWindow = null;
+        if (mAdsWindow != null) {
+            mAdsWindow.dismiss();
+            mAdsWindow = null;
         }
     }
 
     private String formatUrl(String url) {
         String tle = "N/A";
         try {
-            URL urlObj = new URL(url);
-            String path = urlObj.getPath();
-            String name = new File(path).getName();
+            final URL urlObj = new URL(url);
+            final String path = urlObj.getPath();
+            final String name = new File(path).getName();
             if (!name.isEmpty()) {
                 tle = name;
             }
-            final int LENGTH = 12;
             if (tle.length() > LENGTH) {
                 tle = tle.substring(0, LENGTH - 1) + "\u2026";
             }
@@ -273,53 +272,52 @@ public class GlobeNativeActivity extends NativeActivity {
     }
 
     public void updateLabel(final String label) {
-        if (_label == null) {
+        if (mLabel == null) {
             return;
         }
 
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Resources res = getResources();
-                String result;
+                final Resources res = getResources();
+                final String result;
                 if (label == null) {
-                    if (usedUrl_ == null) {
+                    if (mUsedUrl == null) {
                         result = String.format(Locale.getDefault(),
-                            res.getString(R.string.format_default), fps_);
+                            res.getString(R.string.format_default), mFps);
                     } else {
                         result = String.format(Locale.getDefault(),
-                            res.getString(R.string.format_std), fps_, dt_,
-                            formatUrl(usedUrl_));
+                            res.getString(R.string.format_std), mFps, mDt,
+                            formatUrl(mUsedUrl));
                     }
                 } else {
                     result = label;
                 }
-                _label.setText(result);
+                mLabel.setText(result);
             }
         });
     }
 
-    public void showAds() {
-        if (_adsWindow != null) {
+    public void showAdsImpl() {
+        if (mAdsWindow != null) {
             return;
         }
 
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                View popupView = inflateView(R.layout.ads);
-                _adsWindow = new PopupWindow(popupView,
+                final View popupView = inflateView(R.layout.ads);
+                mAdsWindow = new PopupWindow(popupView,
                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 
                 // Show our UI over NativeActivity window
-                int height = getStatusBarHeight();
-                _adsWindow.showAtLocation(_mainLayout, Gravity.NO_GRAVITY, 0,
-                    height);
+                final int height = getStatusBarHeight();
+                mAdsWindow.showAtLocation(mMainLayout, Gravity.NO_GRAVITY, 0, height);
 
                 // Look up the AdView as a resource and load a request.
-                AdView adView = popupView.findViewById(R.id.adView);
-                AdRequest adRequest = new AdRequest.Builder().addTestDevice(
+                final AdView adView = popupView.findViewById(R.id.adView);
+                final AdRequest adRequest = new AdRequest.Builder().addTestDevice(
                     AdRequest.DEVICE_ID_EMULATOR).build();
                 adView.loadAd(adRequest);
             }
@@ -328,8 +326,8 @@ public class GlobeNativeActivity extends NativeActivity {
 
     public void showBeam(String name, int catnum, float lat, float lon,
         float alt) {
-        Resources res = getResources();
-        String msg = String.format(res.getString(R.string.format_info), name,
+        final Resources res = getResources();
+        final String msg = String.format(res.getString(R.string.format_info), name,
             catnum, lat, lon, alt);
         showToast(msg);
     }
@@ -338,17 +336,17 @@ public class GlobeNativeActivity extends NativeActivity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Context context = getApplicationContext();
-                int duration = Toast.LENGTH_LONG;
+                final Context context = getApplicationContext();
+                final int duration = Toast.LENGTH_LONG;
 
-                Toast toast = Toast.makeText(context, text, duration);
+                final Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
         });
     }
 
     public void updateFPS(final float fps) {
-        fps_ = fps;
+        mFps = fps;
         updateLabel(null);
     }
 
