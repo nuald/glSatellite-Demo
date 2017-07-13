@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,71 +68,58 @@ public class GlobeNativeActivity extends NativeActivity {
         }
     }
 
-    // Background function to download a new file if needed
-    private boolean downloadFile() {
-        HttpURLConnection urlConnection = null;
-        InputStream input = null;
-        OutputStream output = null;
-        String etag = null;
-        long dt = 0;
-        try {
-            final URL url = new URL(mUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
+    private Pair<String, Long> downloadFileImpl() {
+        try (CustomHttpUrlConnection urlConnection = new CustomHttpUrlConnection(mUrl)) {
             // Read meta-data
-            etag = urlConnection.getHeaderField("ETag");
-            if (etag == null) {
-                return false;
-            }
-            etag = etag.replaceAll("[\":/\\\\]", "");
-            dt = urlConnection.getHeaderFieldDate("Last-Modified", 0);
-            final File file = new File(getExternalFilesDir(null), etag);
-            // Etag is unique, hence if file exists do not download
-            if (!file.exists()) {
-                // Download the file
-                input = new BufferedInputStream(urlConnection.getInputStream());
-                output = new FileOutputStream(file);
-                final int lengthOfFile = urlConnection.getContentLength();
+            String etag = urlConnection.getETag();
+            if (etag != null) {
+                etag = etag.replaceAll("[\":/\\\\]", "");
+                final long dt = urlConnection.getLastModified();
+                final File file = new File(getExternalFilesDir(null), etag);
+                // ETag is unique, hence if file exists do not download
+                if (!file.exists()) {
+                    // Download the file
+                    try (InputStream input = urlConnection.getInputStream();
+                         OutputStream output = new FileOutputStream(file)) {
+                        final int lengthOfFile = urlConnection.getContentLength();
 
-                final byte[] data = new byte[1024];
-                int total = 0;
-                int count;
+                        final byte[] data = new byte[1024];
+                        int total = 0;
+                        int count;
 
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    final int progress = total * 100 / lengthOfFile;
-                    setProgressBarPosition(progress);
-                    // writing data to file
-                    output.write(data, 0, count);
+                        while ((count = input.read(data)) != -1) {
+                            total += count;
+                            final int progress = total * 100 / lengthOfFile;
+                            setProgressBarPosition(progress);
+                            // writing data to file
+                            output.write(data, 0, count);
+                        }
+
+                        // flushing output
+                        output.flush();
+                    }
                 }
-
-                // flushing output
-                output.flush();
+                return new Pair<>(etag, dt);
             }
         } catch (IOException e) {
             logException(e);
-            return false;
-        } finally {
-            try {
-                if (output != null) {
-                    output.close();
-                }
-                if (input != null) {
-                    input.close();
-                }
-            } catch (IOException e) {
-                logException(e);
-                return false;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
         }
-        setProgressBarPosition(0);
-        mDt = new Date(dt);
-        mUsedUrl = mUrl;
-        useTle(etag);
-        return true;
+        return new Pair<>(null, 0L);
+    }
+
+    // Background function to download a new file if needed
+    private boolean downloadFile() {
+        final Pair<String, Long> meta = downloadFileImpl();
+        final String etag = meta.first;
+        final long dt = meta.second;
+        if (etag != null) {
+            setProgressBarPosition(0);
+            mDt = new Date(dt);
+            mUsedUrl = mUrl;
+            useTle(etag);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -263,7 +251,7 @@ public class GlobeNativeActivity extends NativeActivity {
                 tle = name;
             }
             if (tle.length() > LENGTH) {
-                tle = tle.substring(0, LENGTH - 1) + "\u2026";
+                tle = tle.substring(0, LENGTH - 1) + "…";
             }
         } catch (MalformedURLException e) {
             // do not log the error because it'll spam the log
@@ -350,4 +338,33 @@ public class GlobeNativeActivity extends NativeActivity {
         updateLabel(null);
     }
 
+    private static class CustomHttpUrlConnection implements AutoCloseable {
+        private final HttpURLConnection mConnection;
+
+        CustomHttpUrlConnection(String urlString) throws IOException {
+            final URL url = new URL(urlString);
+            mConnection = (HttpURLConnection) url.openConnection();
+        }
+
+        @Override
+        public void close() throws IOException {
+            mConnection.disconnect();
+        }
+
+        String getETag() {
+            return mConnection.getHeaderField("ETag");
+        }
+
+        long getLastModified() {
+            return mConnection.getHeaderFieldDate("Last-Modified", 0);
+        }
+
+        InputStream getInputStream() throws IOException {
+            return new BufferedInputStream(mConnection.getInputStream());
+        }
+
+        int getContentLength() {
+            return mConnection.getContentLength();
+        }
+    }
 }

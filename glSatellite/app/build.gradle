@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "ca.raido.glSatelliteDemo"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 26
 
         ndk {
