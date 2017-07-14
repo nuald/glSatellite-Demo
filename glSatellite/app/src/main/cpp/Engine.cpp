@@ -91,10 +91,7 @@ bool Engine::IsZoomEnabled(Vec2 v1, Vec2 v2) {
     if (!renderer_.IsZoomInEnabled()) {
         return diff < 0;
     }
-    if (!renderer_.IsZoomOutEnabled()) {
-        return diff > 0;
-    }
-    return true;
+    return renderer_.IsZoomOutEnabled() || diff > 0;
 }
 
 /**

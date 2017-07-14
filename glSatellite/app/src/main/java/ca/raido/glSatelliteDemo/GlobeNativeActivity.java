@@ -38,7 +38,7 @@ import java.util.Locale;
 
 public class GlobeNativeActivity extends NativeActivity {
 
-    static final int LENGTH = 12;
+    private static final int LENGTH = 12;
 
     private String mUrl;
     private String mUsedUrl;
@@ -137,7 +137,8 @@ public class GlobeNativeActivity extends NativeActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (!downloadFile()) {
+                final boolean succeeded = downloadFile();
+                if (!succeeded) {
                     final Resources res = getResources();
                     showToast(String.format(
                         res.getString(R.string.format_fail), mUrl));

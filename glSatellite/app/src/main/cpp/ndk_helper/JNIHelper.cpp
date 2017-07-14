@@ -400,7 +400,7 @@ std::string JNIHelper::ConvertString(const char* str, const char* encode) {
   JNIEnv* env = AttachCurrentThread();
   env->PushLocalFrame(16);
 
-  int32_t iLength = strlen((const char*)str);
+  size_t iLength = strlen(str);
 
   jbyteArray array = env->NewByteArray(iLength);
   env->SetByteArrayRegion(array, 0, iLength, (const signed char*)str);

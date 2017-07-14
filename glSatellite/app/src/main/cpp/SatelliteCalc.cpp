@@ -1082,6 +1082,7 @@ void SatelliteCalc::Deep(int ientry) {
                     - cos(deep_arg.xinc) * deep_arg.xnode;
         }
         return;
+        default: break;
     }
 }
 

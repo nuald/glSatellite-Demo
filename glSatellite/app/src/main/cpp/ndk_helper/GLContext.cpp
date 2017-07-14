@@ -110,7 +110,7 @@ bool GLContext::InitEGLSurface() {
 
   if (!num_configs) {
     // Fall back to 16bit depth buffer
-    const EGLint attribs[] = {EGL_RENDERABLE_TYPE,
+    const EGLint attr16bit[] = {EGL_RENDERABLE_TYPE,
                               EGL_OPENGL_ES2_BIT,  // Request opengl ES2.0
                               EGL_SURFACE_TYPE,
                               EGL_WINDOW_BIT,
@@ -123,7 +123,7 @@ bool GLContext::InitEGLSurface() {
                               EGL_DEPTH_SIZE,
                               16,
                               EGL_NONE};
-    eglChooseConfig(display_, attribs, &config_, 1, &num_configs);
+    eglChooseConfig(display_, attr16bit, &config_, 1, &num_configs);
     depth_size_ = 16;
   }
 
@@ -193,7 +193,7 @@ void GLContext::Terminate() {
 }
 
 EGLint GLContext::Resume(ANativeWindow* window) {
-  if (egl_context_initialized_ == false) {
+  if (!egl_context_initialized_) {
     Init(window);
     return EGL_SUCCESS;
   }
@@ -254,11 +254,8 @@ bool GLContext::CheckExtension(const char* extension) {
   str.append(" ");
 
   size_t pos = 0;
-  if (extensions.find(extension, pos) != std::string::npos) {
-    return true;
-  }
+  return extensions.find(extension, pos) != std::string::npos;
 
-  return false;
 }
 
 }  // namespace ndkHelper

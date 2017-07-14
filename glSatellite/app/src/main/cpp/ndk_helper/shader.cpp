@@ -158,9 +158,8 @@ bool shader::ValidateProgram(const GLuint prog) {
   }
 
   glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-  if (status == 0) return false;
+  return status != 0;
 
-  return true;
 }
 
 }  // namespace ndkHelper

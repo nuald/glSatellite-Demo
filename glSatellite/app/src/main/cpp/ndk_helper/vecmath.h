@@ -167,14 +167,12 @@ class Vec2 {
 
   // Compare
   bool operator==(const Vec2& rhs) const {
-    if (x_ != rhs.x_ || y_ != rhs.y_) return false;
-    return true;
+    return !(x_ != rhs.x_ || y_ != rhs.y_);
   }
 
   bool operator!=(const Vec2& rhs) const {
-    if (x_ == rhs.x_) return false;
+    return x_ != rhs.x_;
 
-    return true;
   }
 
   float Length() const { return sqrtf(x_ * x_ + y_ * y_); }
@@ -189,8 +187,7 @@ class Vec2 {
   float Dot(const Vec2& rhs) { return x_ * rhs.x_ + y_ * rhs.y_; }
 
   bool Validate() {
-    if (std::isnan(x_) || std::isnan(y_)) return false;
-    return true;
+    return !(std::isnan(x_) || std::isnan(y_));
   }
 
   void Value(float& fX, float& fY) {
@@ -355,14 +352,12 @@ class Vec3 {
 
   // Compare
   bool operator==(const Vec3& rhs) const {
-    if (x_ != rhs.x_ || y_ != rhs.y_ || z_ != rhs.z_) return false;
-    return true;
+    return !(x_ != rhs.x_ || y_ != rhs.y_ || z_ != rhs.z_);
   }
 
   bool operator!=(const Vec3& rhs) const {
-    if (x_ == rhs.x_) return false;
+    return x_ != rhs.x_;
 
-    return true;
   }
 
   float Length() const { return sqrtf(x_ * x_ + y_ * y_ + z_ * z_); }
@@ -386,8 +381,7 @@ class Vec3 {
   }
 
   bool Validate() {
-    if (std::isnan(x_) || std::isnan(y_) || std::isnan(z_)) return false;
-    return true;
+    return !(std::isnan(x_) || std::isnan(y_) || std::isnan(z_));
   }
 
   void Value(float& fX, float& fY, float& fZ) {
@@ -569,15 +563,12 @@ class Vec4 {
 
   // Compare
   bool operator==(const Vec4& rhs) const {
-    if (x_ != rhs.x_ || y_ != rhs.y_ || z_ != rhs.z_ || w_ != rhs.w_)
-      return false;
-    return true;
+    return !(x_ != rhs.x_ || y_ != rhs.y_ || z_ != rhs.z_ || w_ != rhs.w_);
   }
 
   bool operator!=(const Vec4& rhs) const {
-    if (x_ == rhs.x_) return false;
+    return x_ != rhs.x_;
 
-    return true;
   }
 
   Vec4 operator*(const Mat4& rhs) const;
@@ -604,11 +595,9 @@ class Vec4 {
   }
 
   bool Validate() {
-    if (std::isnan(x_) || std::isnan(y_) ||
-        std::isnan(z_) || std::isnan(w_))
-      return false;
+    return !(std::isnan(x_) || std::isnan(y_) ||
+             std::isnan(z_) || std::isnan(w_));
 
-    return true;
   }
 
   void Value(float& fX, float& fY, float& fZ, float& fW) {

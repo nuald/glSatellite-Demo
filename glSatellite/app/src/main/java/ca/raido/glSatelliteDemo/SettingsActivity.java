@@ -83,14 +83,13 @@ public class SettingsActivity extends Activity implements
             return getPreferenceScreen().getSharedPreferences();
         }
 
-        public String updatePrefUrlValue() {
+        public void updatePrefUrlValue() {
             final String url = getUrl();
             final EditTextPreference urlPref = (EditTextPreference) findPreference(PREF_URL);
             urlPref.setText(url);
             urlPref.setSummary(url);
             final SharedPreferences prefs = getPrefs();
             prefs.edit().putString(PREF_URL, url).apply();
-            return url;
         }
 
         private void updatePrefUrl() {

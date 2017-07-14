@@ -23,8 +23,9 @@ const float INITIAL_LONGITUDE = 90;
 const float INITIAL_LATITUDE = 90;
 const float CAM_STOP_MIN = -1000;
 const float CAM_STOP_MAX = 500;
+
 // Debug mode for color picker
-const bool DEBUG_FBO = false;
+#define DEBUG_FBO false
 
 GlobeRenderer::GlobeRenderer() :
             zoom_in_enabled_(true),
@@ -535,17 +536,17 @@ void GlobeRenderer::Render() {
 
     // Render scene
     BindAndClear();
-    if (DEBUG_FBO) {
-        RenderBeams(true);
-    } else {
-        RenderBackground();
-        RenderGlobe();
+#if DEBUG_FBO
+    RenderBeams(true);
+#else
+    RenderBackground();
+    RenderGlobe();
 
-        glEnable (GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        RenderBeams();
-        glDisable(GL_BLEND);
-    }
+    glEnable (GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    RenderBeams();
+    glDisable(GL_BLEND);
+#endif
 
     if (read_requested_) {
         glBindFramebuffer(GL_FRAMEBUFFER, fb_);
@@ -584,18 +585,19 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
     class ShaderHelper {
         GLuint shader;
     public:
-        ShaderHelper(const char *path, GLuint program, GLenum shader_type) {
+        ShaderHelper(const char *path, GLuint shaderProgram, GLenum shader_type) {
             if (!shader::CompileShader(&shader, shader_type, path)) {
-                glDeleteProgram(program);
+                glDeleteProgram(shaderProgram);
                 throw RuntimeError(AT, "Failed to compile shader from %s",
                     path);
             }
-            glAttachShader(program, shader);
+            glAttachShader(shaderProgram, shader);
         }
-        ;
+
         ~ShaderHelper() {
             glDeleteShader(shader);
         }
+
         operator GLuint() {
             return shader;
         }

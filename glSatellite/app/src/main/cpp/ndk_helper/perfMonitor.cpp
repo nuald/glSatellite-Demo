@@ -35,7 +35,7 @@ double PerfMonitor::UpdateTick(double currentTick) {
   ticklist_[tickindex_] = currentTick;
   tickindex_ = (tickindex_ + 1) % kNumSamples;
 
-  return ((double)ticksum_ / kNumSamples);
+  return ticksum_ / kNumSamples;
 }
 
 bool PerfMonitor::Update(float &fFPS) {

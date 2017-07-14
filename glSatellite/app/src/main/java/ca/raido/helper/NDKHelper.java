@@ -38,7 +38,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class NDKHelper {
 
-    private NativeActivity activity;
+    private final NativeActivity activity;
 
     public NDKHelper(NativeActivity act) {
         activity = act;
@@ -180,13 +180,9 @@ public class NDKHelper {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public int getNativeAudioBufferSize() {
-        if (Build.VERSION.SDK_INT >= 17) {
-            final AudioManager am = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
-            final String framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-            return Integer.parseInt(framesPerBuffer);
-        } else {
-            return 0;
-        }
+        final AudioManager am = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
+        final String framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        return Integer.parseInt(framesPerBuffer);
     }
 
     public int getNativeAudioSampleRate() {

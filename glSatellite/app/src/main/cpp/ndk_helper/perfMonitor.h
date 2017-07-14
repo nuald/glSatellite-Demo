@@ -31,7 +31,7 @@ const int32_t kNumSamples = 100;
  */
 class PerfMonitor {
  private:
-  float current_FPS_;
+  double current_FPS_;
   time_t tv_last_sec_;
 
   double last_tick_;

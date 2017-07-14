@@ -29,10 +29,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
     externalNativeBuild {
         cmake {
             path 'src/main/cpp/CMakeLists.txt'
         }
+    }
+
+    lintOptions {
+        disable 'TypographyDashes'
     }
 }
 
@@ -60,4 +65,23 @@ task checkstyle(type: Checkstyle) {
 
     // empty classpath
     classpath = files()
+}
+
+task infer(type: Exec) {
+    group VERIFICATION_GROUP
+    description 'Runs Infer check.'
+
+    def inferCmd = 'infer'
+    onlyIf {
+        !"which $inferCmd".execute().waitFor()
+    }
+    def inferOpts = ['-o', "$buildDir/infer-out"]
+    def gradleCmd = ['gradle', 'build', '--rerun-tasks']
+    def cmd = [inferCmd] + inferOpts + ['--'] + gradleCmd
+    commandLine(*cmd)
+}
+
+task tests(dependsOn: [check, infer, 'checkstyle']) {
+    group VERIFICATION_GROUP
+    description 'Runs all tests.'
 }
