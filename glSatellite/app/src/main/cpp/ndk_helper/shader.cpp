@@ -22,7 +22,7 @@
 
 namespace ndk_helper {
 
-#define DEBUG (1)
+#define DEBUG
 
 bool shader::CompileShader(
     GLuint *shader, const GLenum type, const char *str_file_name,
@@ -78,7 +78,7 @@ bool shader::CompileShader(GLuint *shader, const GLenum type,
 
   glCompileShader(*shader);
 
-#if defined(DEBUG)
+#ifdef DEBUG
   GLint logLength;
   glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
   if (logLength > 0) {
@@ -120,24 +120,26 @@ bool shader::CompileShader(GLuint *shader, const GLenum type,
   return shader::CompileShader(shader, type, data);
 }
 
+void printLog(const GLuint prog) {
+  GLint maxLength = 0;
+  glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &maxLength);
+  std::vector<GLchar> infoLog(maxLength);
+  glGetProgramInfoLog(prog, maxLength, &maxLength, &infoLog[0]);
+  std::string log(infoLog.begin(), infoLog.end());
+  LOGI("Program link log:\n%s", log.c_str());
+}
+
 bool shader::LinkProgram(const GLuint prog) {
   GLint status;
 
   glLinkProgram(prog);
 
-#if defined(DEBUG)
-  GLint logLength;
-  glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0) {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetProgramInfoLog(prog, logLength, &logLength, log);
-    LOGI("Program link log:\n%s", log);
-    free(log);
-  }
+#ifdef DEBUG
+  printLog(prog);
 #endif
 
   glGetProgramiv(prog, GL_LINK_STATUS, &status);
-  if (status == 0) {
+  if (status == GL_FALSE) {
     LOGI("Program link failed\n");
     return false;
   }
@@ -146,16 +148,10 @@ bool shader::LinkProgram(const GLuint prog) {
 }
 
 bool shader::ValidateProgram(const GLuint prog) {
-  GLint logLength, status;
+  GLint status;
 
   glValidateProgram(prog);
-  glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0) {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetProgramInfoLog(prog, logLength, &logLength, log);
-    LOGI("Program validate log:\n%s", log);
-    free(log);
-  }
+  printLog(prog);
 
   glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
   return status != 0;

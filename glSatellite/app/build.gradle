@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "ca.raido.glSatelliteDemo"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 26
 
         ndk {
@@ -47,6 +47,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:26.0.0-beta2'
+    compile 'com.android.support:design:26.0.0-beta2'
     compile 'com.google.android.gms:play-services-ads:11.0.2'
 }
 
