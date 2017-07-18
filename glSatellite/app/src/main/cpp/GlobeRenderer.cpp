@@ -614,9 +614,6 @@ void GlobeRenderer::LoadShaders(SHADER_PARAMS *params, const char *strVsh,
 
     // Link program
     if (!shader::LinkProgram(program)) {
-        if (program) {
-            glDeleteProgram(program);
-        }
         throw RuntimeError(AT, "Failed to link program: %d", program);
     }
 

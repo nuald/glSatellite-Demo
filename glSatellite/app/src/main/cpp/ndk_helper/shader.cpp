@@ -70,7 +70,9 @@ bool shader::CompileShader(
 
 bool shader::CompileShader(GLuint *shader, const GLenum type,
                            const GLchar *source, const int32_t iSize) {
-  if (source == NULL || iSize <= 0) return false;
+  if (source == NULL || iSize <= 0) {
+      return false;
+  }
 
   *shader = glCreateShader(type);
   glShaderSource(*shader, 1, &source, &iSize);  // Not specifying 3rd parameter
@@ -78,20 +80,20 @@ bool shader::CompileShader(GLuint *shader, const GLenum type,
 
   glCompileShader(*shader);
 
+  GLint isCompiled;
+  glGetShaderiv(*shader, GL_COMPILE_STATUS, &isCompiled);
+  if (isCompiled == GL_FALSE) {
+    LOGI("Shader compile failed\n");
 #ifdef DEBUG
-  GLint logLength;
-  glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0) {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetShaderInfoLog(*shader, logLength, &logLength, log);
-    LOGI("Shader compile log:\n%s", log);
-    free(log);
-  }
-#endif
+    GLint maxLength = 0;
+    glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-  GLint status;
-  glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-  if (status == 0) {
+    //The maxLength includes the NULL character
+    std::vector<GLchar> infoLog(maxLength);
+    glGetShaderInfoLog(*shader, maxLength, &maxLength, &infoLog[0]);
+    std::string log(infoLog.begin(), infoLog.end());
+    LOGI("Shader compile log:\n%s", log.c_str());
+#endif
     glDeleteShader(*shader);
     return false;
   }
@@ -113,7 +115,7 @@ bool shader::CompileShader(GLuint *shader, const GLenum type,
   std::vector<uint8_t> data;
   bool b = JNIHelper::GetInstance()->ReadFile(strFileName, &data);
   if (!b) {
-    LOGI("Can not open a file:%s", strFileName);
+    LOGI("Can not open a file: %s", strFileName);
     return false;
   }
 
@@ -130,17 +132,18 @@ void printLog(const GLuint prog) {
 }
 
 bool shader::LinkProgram(const GLuint prog) {
-  GLint status;
 
   glLinkProgram(prog);
 
-#ifdef DEBUG
-  printLog(prog);
-#endif
-
-  glGetProgramiv(prog, GL_LINK_STATUS, &status);
-  if (status == GL_FALSE) {
+  GLint isLinked = 0;
+  glGetProgramiv(prog, GL_LINK_STATUS, &isLinked);
+  if (isLinked == GL_FALSE)
+  {
     LOGI("Program link failed\n");
+#ifdef DEBUG
+    printLog(prog);
+#endif
+    glDeleteProgram(prog);
     return false;
   }
 
