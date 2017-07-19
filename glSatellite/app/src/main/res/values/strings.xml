@@ -7,7 +7,6 @@
     <string name="format_default">FPS: %1$2.0f Offline Iridium TLE</string>
     <string name="format_info">%1$s (%2$d)\nLAT: %3$f LON: %4$f\nALT: %5$f</string>
     <string name="title_other">Other</string>
-    <string name="title_sync"><b>Sync TLE Fetch URL</b></string>
 
     <!-- Strings related to Settings -->
     <string name="pref_title_db">Satellites</string>

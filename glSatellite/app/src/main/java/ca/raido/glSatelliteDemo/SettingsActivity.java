@@ -4,14 +4,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -26,7 +28,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
     static final String FMT = "http://www.celestrak.com/NORAD/elements/%s.txt";
 
-    private static final String PREF_SYNC = "pref_sync";
     private static final String[] PREF_DB = {
         "pref_db_special",
         "pref_db_earth",
@@ -131,13 +132,16 @@ public class SettingsActivity extends AppCompatActivity implements
             if (key.equals(PREF_URL)) {
                 updatePrefUrl();
             } else if (Arrays.asList(PREF_DB).contains(key)) {
-                final String value = prefs.getString(key, DEFAULT);
-                prefs.edit().putString(PREF_TLE, value).apply();
-                getFragmentManager().popBackStack();
+                // Satellite onResume clears the preferences
+                final String value = prefs.getString(key, null);
+                if (value != null) {
+                    prefs.edit().putString(PREF_TLE, value).apply();
+                    getFragmentManager().popBackStack();
+                }
             }
         }
 
-        private String getUrl() {
+        protected String getUrl() {
             final SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
             final String tle = prefs.getString(PREF_TLE, DEFAULT);
             return String.format(FMT, tle);
@@ -187,8 +191,21 @@ public class SettingsActivity extends AppCompatActivity implements
             final SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
             final Preference tlePref = findPreference(PREF_TLE);
             tlePref.setSummary(prefs.getString(PREF_TLE, DEFAULT));
-            if (prefs.getBoolean(PREF_SYNC, false)) {
-                updatePrefUrlValue();
+
+            final String calculatedUrl = getUrl();
+            final String currentUrl = prefs.getString(PREF_URL, "");
+            if (!calculatedUrl.equals(currentUrl)) {
+                CoordinatorLayout coordinatorLayout = getActivity().findViewById(R.id.coordinator_layout);
+                Snackbar snackbar = Snackbar
+                    .make(coordinatorLayout, "URL doesn't correspond to the TLE", Snackbar.LENGTH_LONG)
+                    .setAction("SYNC", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            updatePrefUrlValue();
+                        }
+                    });
+
+                snackbar.show();
             }
         }
     }
@@ -214,9 +231,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
             final SharedPreferences sharedPrefs = getPreferenceScreen().getSharedPreferences();
             final SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putBoolean(PREF_SYNC, false);
-            final CheckBoxPreference pref = (CheckBoxPreference) findPreference(PREF_SYNC);
-            pref.setChecked(false);
             for (String key : PREF_DB) {
                 editor.putString(key, null);
             }

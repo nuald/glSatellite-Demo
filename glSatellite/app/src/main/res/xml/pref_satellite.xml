@@ -36,9 +36,4 @@
         android:entries="@array/db_misc_entries"
         android:entryValues="@array/db_misc_values" />
 
-    <CheckBoxPreference
-        android:title="@string/title_sync"
-        android:textAlignment="center"
-        android:key="pref_sync" />
-
 </PreferenceScreen>
