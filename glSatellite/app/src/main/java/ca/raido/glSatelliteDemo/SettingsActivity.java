@@ -1,5 +1,6 @@
 package ca.raido.glSatelliteDemo;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
@@ -195,8 +196,9 @@ public class SettingsActivity extends AppCompatActivity implements
             final String calculatedUrl = getUrl();
             final String currentUrl = prefs.getString(PREF_URL, "");
             if (!calculatedUrl.equals(currentUrl)) {
-                CoordinatorLayout coordinatorLayout = getActivity().findViewById(R.id.coordinator_layout);
-                Snackbar snackbar = Snackbar
+                final Activity activity = getActivity();
+                final CoordinatorLayout coordinatorLayout = activity.findViewById(R.id.coordinator_layout);
+                final Snackbar snackbar = Snackbar
                     .make(coordinatorLayout, "URL doesn't correspond to the TLE", Snackbar.LENGTH_LONG)
                     .setAction("SYNC", new View.OnClickListener() {
                         @Override
