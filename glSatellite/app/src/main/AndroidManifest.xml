@@ -1,8 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="ca.raido.glSatelliteDemo"
-    android:versionCode="1"
-    android:versionName="1.0">
+          package="ca.raido.glSatelliteDemo">
 
     <uses-feature android:glEsVersion="0x00020000" >
     </uses-feature>
