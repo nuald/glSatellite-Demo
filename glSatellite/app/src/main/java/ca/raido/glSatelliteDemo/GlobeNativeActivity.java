@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.TrafficStats;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -39,6 +40,7 @@ import java.util.Locale;
 public class GlobeNativeActivity extends NativeActivity {
 
     private static final int LENGTH = 12;
+    private static final int THREAD_STATS_TAG = 0xDEADBEEF;
 
     private String mUrl;
     private String mUsedUrl;
@@ -109,7 +111,10 @@ public class GlobeNativeActivity extends NativeActivity {
 
     // Background function to download a new file if needed
     private boolean downloadFile() {
+        TrafficStats.setThreadStatsTag(THREAD_STATS_TAG);
         final Pair<String, Long> meta = downloadFileImpl();
+        TrafficStats.clearThreadStatsTag();
+
         final String etag = meta.first;
         final long dt = meta.second;
         if (etag != null) {
