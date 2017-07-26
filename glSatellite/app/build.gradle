@@ -49,16 +49,16 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:26.0.0-beta2'
-    compile 'com.android.support:design:26.0.0-beta2'
-    compile 'com.android.support:customtabs:26.0.0-beta2'
+    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile 'com.android.support:design:26.0.0'
+    compile 'com.android.support:customtabs:26.0.0'
     compile 'com.google.android.gms:play-services-ads:11.0.2'
     compile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
 
-    androidTestCompile 'com.android.support:support-annotations:26.0.0-beta2'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support:support-annotations:26.0.0'
+    androidTestCompile 'com.android.support.test:runner:1.0'
+    androidTestCompile 'com.android.support.test:rules:1.0'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.0'
 }
 
 task checkstyle(type: Checkstyle) {
