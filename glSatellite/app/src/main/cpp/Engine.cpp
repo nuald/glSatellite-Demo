@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <dlfcn.h>
 #include "Engine.h"
 #include "DebugUtils.h"
 #include "FileReaderFactory.h"
@@ -210,8 +211,48 @@ void Engine::HandleCmd(android_app *app, int32_t cmd) {
 //-------------------------------------------------------------------------
 //Sensor handlers
 //-------------------------------------------------------------------------
+ASensorManager* AcquireASensorManagerInstance(android_app* app) {
+
+    if(!app)
+        return nullptr;
+
+    typedef ASensorManager *(*PF_GETINSTANCEFORPACKAGE)(const char *name);
+    void* androidHandle = dlopen("libandroid.so", RTLD_NOW);
+    PF_GETINSTANCEFORPACKAGE getInstanceForPackageFunc = (PF_GETINSTANCEFORPACKAGE)
+            dlsym(androidHandle, "ASensorManager_getInstanceForPackage");
+    if (getInstanceForPackageFunc) {
+        JNIEnv* env = nullptr;
+        app->activity->vm->AttachCurrentThread(&env, NULL);
+
+        jclass android_content_Context = env->GetObjectClass(app->activity->clazz);
+        jmethodID midGetPackageName = env->GetMethodID(android_content_Context,
+                                                       "getPackageName",
+                                                       "()Ljava/lang/String;");
+        jstring packageName= (jstring)env->CallObjectMethod(app->activity->clazz,
+                                                            midGetPackageName);
+
+        const char *nativePackageName = env->GetStringUTFChars(packageName, 0);
+        ASensorManager* mgr = getInstanceForPackageFunc(nativePackageName);
+        env->ReleaseStringUTFChars(packageName, nativePackageName);
+        app->activity->vm->DetachCurrentThread();
+        if (mgr) {
+            dlclose(androidHandle);
+            return mgr;
+        }
+    }
+
+    typedef ASensorManager *(*PF_GETINSTANCE)();
+    PF_GETINSTANCE getInstanceFunc = (PF_GETINSTANCE)
+            dlsym(androidHandle, "ASensorManager_getInstance");
+    // by all means at this point, ASensorManager_getInstance should be available
+    assert(getInstanceFunc);
+    dlclose(androidHandle);
+
+    return getInstanceFunc();
+}
+
 void Engine::InitSensors() {
-    sensor_manager_ = ndk_helper::AcquireASensorManagerInstance(app_);
+    sensor_manager_ = AcquireASensorManagerInstance(app_);
     accelerometer_sensor_ = ASensorManager_getDefaultSensor(sensor_manager_,
         ASENSOR_TYPE_ACCELEROMETER);
     sensor_event_queue_ = ASensorManager_createEventQueue(sensor_manager_,

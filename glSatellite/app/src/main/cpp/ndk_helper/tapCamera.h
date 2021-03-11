@@ -21,7 +21,6 @@
 
 #include "JNIHelper.h"
 #include "vecmath.h"
-#include "interpolator.h"
 
 namespace ndk_helper {
 
@@ -45,7 +44,6 @@ private:
     bool pinching_;
 
     //Pinch related info
-    ndk_helper::Vec2 vec_pinch_start_;
     ndk_helper::Vec2 vec_pinch_start_center_;
     float pinch_start_distance_SQ_;
 

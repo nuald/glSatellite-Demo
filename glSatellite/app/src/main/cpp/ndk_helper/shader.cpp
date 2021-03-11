@@ -24,50 +24,6 @@ namespace ndk_helper {
 
 #define DEBUG
 
-bool shader::CompileShader(
-    GLuint *shader, const GLenum type, const char *str_file_name,
-    const std::map<std::string, std::string> &map_parameters) {
-  std::vector<uint8_t> data;
-  if (!JNIHelper::GetInstance()->ReadFile(str_file_name, &data)) {
-    LOGI("Can not open a file:%s", str_file_name);
-    return false;
-  }
-
-  const char REPLACEMENT_TAG = '*';
-  // Fill-in parameters
-  std::string str(data.begin(), data.end());
-  std::string str_replacement_map(data.size(), ' ');
-
-  std::map<std::string, std::string>::const_iterator it =
-      map_parameters.begin();
-  std::map<std::string, std::string>::const_iterator itEnd =
-      map_parameters.end();
-  while (it != itEnd) {
-    size_t pos = 0;
-    while ((pos = str.find(it->first, pos)) != std::string::npos) {
-      // Check if the sub string is already touched
-
-      size_t replaced_pos = str_replacement_map.find(REPLACEMENT_TAG, pos);
-      if (replaced_pos == std::string::npos || replaced_pos > pos) {
-        str.replace(pos, it->first.length(), it->second);
-        str_replacement_map.replace(pos, it->first.length(), it->first.length(),
-                                    REPLACEMENT_TAG);
-        pos += it->second.length();
-      } else {
-        // The replacement target has been touched by other tag, skipping them
-        pos += it->second.length();
-      }
-    }
-    it++;
-  }
-
-  LOGI("Patched Shdader:\n%s", str.c_str());
-
-  std::vector<uint8_t> v(str.begin(), str.end());
-  str.clear();
-  return shader::CompileShader(shader, type, v);
-}
-
 bool shader::CompileShader(GLuint *shader, const GLenum type,
                            const GLchar *source, const int32_t iSize) {
   if (source == NULL || iSize <= 0) {
@@ -148,17 +104,6 @@ bool shader::LinkProgram(const GLuint prog) {
   }
 
   return true;
-}
-
-bool shader::ValidateProgram(const GLuint prog) {
-  GLint status;
-
-  glValidateProgram(prog);
-  printLog(prog);
-
-  glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-  return status != 0;
-
 }
 
 }  // namespace ndkHelper

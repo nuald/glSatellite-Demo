@@ -34,7 +34,6 @@ class Engine {
     void UpdateFPS(float fFPS);
     void ShowUI();
     void ShowError(const char *error);
-    void ShowAds();
     void UseTle(char *path);
     void ShowBeam(size_t num);
     void TransformPosition(ndk_helper::Vec2 &vec);

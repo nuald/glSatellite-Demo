@@ -17,8 +17,6 @@
 #ifndef _NDKSUPPORT_H
 #define _NDKSUPPORT_H
 
-#define NDK_HELPER_VERSION "0.90"
-
 /******************************************************************
  * NDK support helpers
  * Utility module to provide misc functionalities that is used widely in native
@@ -38,6 +36,4 @@
 #include "JNIHelper.h"        // JNI support
 #include "gestureDetector.h"  // Tap/Doubletap/Pinch detector
 #include "perfMonitor.h"      // FPS counter
-#include "sensorManager.h"    // SensorManager
-#include "interpolator.h"     // Interpolator
 #endif

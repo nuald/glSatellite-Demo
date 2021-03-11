@@ -59,7 +59,6 @@ TapCamera::TapCamera() :
     vec_ball_now_ = Vec2(0, 0);
     vec_ball_down_ = Vec2(0, 0);
 
-    vec_pinch_start_ = Vec2(0, 0);
     vec_pinch_start_center_ = Vec2(0, 0);
 
     vec_flip_ = Vec2(0, 0);

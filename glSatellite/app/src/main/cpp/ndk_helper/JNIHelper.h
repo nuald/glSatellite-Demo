@@ -42,8 +42,6 @@
 
 namespace ndk_helper {
 
-class JUIView;
-
 /******************************************************************
  * Helper functions for JNI calls
  * This class wraps JNI calls and provides handy interface calling commonly used
@@ -73,8 +71,6 @@ class JNIHelper {
   JNIHelper(const JNIHelper& rhs);
   JNIHelper& operator=(const JNIHelper& rhs);
 
-  std::string app_label_;
-
   // mutex for synchronization
   // This class uses singleton pattern and can be invoked from multiple threads,
   // each methods locks the mutex for a thread safety
@@ -85,7 +81,6 @@ class JNIHelper {
    */
   jobject CallObjectMethod(const char* strMethodName, const char* strSignature,
                            ...);
-  void CallVoidMethod(const char* strMethodName, const char* strSignature, ...);
 
   /*
    * Unregister this thread from the VM
@@ -177,113 +172,12 @@ class JNIHelper {
                        int32_t* outHeight = nullptr, bool* hasAlpha = nullptr);
 
   /*
-   * Load and create OpenGL cubemap texture from given file name
-   * into specified cubemap face & miplevel
-   * The method invokes BitmapFactory in Java so it can read jpeg/png formatted
-   * files
-   *
-   * arguments:
-   * in: file_name, file name to read, PNG&JPG is supported
-   * outWidth(Optional) pointer to retrieve original bitmap width
-   * outHeight(Optional) pointer to retrieve original bitmap height
-   * return:
-   * OpenGL texture name when the call succeeded
-   * When it failed to load the texture, it returns -1
-   */
-  uint32_t LoadCubemapTexture(const char* file_name, const int32_t face,
-                              const int32_t miplevel, const bool sRGB,
-                              int32_t* outWidth = nullptr,
-                              int32_t* outHeight = nullptr,
-                              bool* hasAlpha = nullptr);
-
-  /*
-   * Load and create image and return it as a byte array.
-   * The method invokes BitmapFactory in Java so it can read jpeg/png formatted
-   * files
-   *
-   * arguments:
-   * in: file_name, file name to read, PNG&JPG is supported
-   * outWidth(Optional) pointer to retrieve original bitmap width
-   * outHeight(Optional) pointer to retrieve original bitmap height
-   * return:
-   * Java ByteBuffer object containing image data converted to RGBA values.
-   */
-  jobject LoadImage(const char* file_name, int32_t* outWidth = nullptr,
-                    int32_t* outHeight = nullptr, bool* hasAlpha = nullptr);
-
-  /*
-   * Convert string from character code other than UTF-8
-   *
-   * arguments:
-   *  in: str, pointer to a string which is encoded other than UTF-8
-   *  in: encoding, pointer to a character encoding string.
-   *  The encoding string can be any valid java.nio.charset.Charset name
-   *  e.g. "UTF-16", "Shift_JIS"
-   * return: converted input string as an UTF-8 std::string
-   */
-  std::string ConvertString(const char* str, const char* encode);
-  /*
-   * Retrieve external file directory through JNI call
-   *
-   * return: std::string containing external file diretory
-   */
-  std::string GetExternalFilesDir();
-
-  /*
-   * Retrieve string resource with a given name
-   * arguments:
-   *  in: resourceName, name of string resource to retrieve
-   * return: string resource value, returns "" when there is no string resource
-   * with given name
-   */
-  std::string GetStringResource(const std::string& resourceName);
-
-  /*
-   * Audio helper
-   * Retrieves native audio buffer size which is required to achieve low latency
-   * audio
-   *
-   * return: Native audio buffer size which is a hint to achieve low latency
-   * audio
-   * If the API is not supported (API level < 17), it returns 0
-   */
-  int32_t GetNativeAudioBufferSize();
-
-  /*
-   * Audio helper
-   * Retrieves native audio sample rate which is required to achieve low latency
-   * audio
-   *
-   * return: Native audio sample rate which is a hint to achieve low latency
-   * audio
-   */
-  int32_t GetNativeAudioSampleRate();
-
-  /*
    * Retrieves application bundle name
    *
    * return: pointer to an app name string
    *
    */
   const char* GetAppName() const { return app_name_.c_str(); }
-
-  /*
-   * Retrieves application label
-   *
-   * return: pointer to an app label string
-   *
-   */
-  const char* GetAppLabel() const { return app_label_.c_str(); }
-
-  /*
-   * Execute given function in Java UIThread.
-   *
-   * arguments:
-   *  in: pFunction, a pointer to a function to be executed in Java UI Thread.
-   *  Note that the helper function returns immediately without synchronizing a
-   *  function completion.
-   */
-  void RunOnUiThread(std::function<void()> callback);
 
   /*
    * Attach current thread
@@ -303,28 +197,6 @@ class JNIHelper {
     activity_->vm->DetachCurrentThread();
     return;
   }
-
-  /*
-   * Decrement a global reference to the object
-   * arguments:
-   *  in: obj, obj to decrement a global reference
-   */
-  void DeleteObject(jobject obj);
-
-  /*
-   * Helper methods to call a method in given object
-   */
-  jobject CreateObject(const char* class_name);
-  jobject CallObjectMethod(jobject object, const char* strMethodName,
-                           const char* strSignature, ...);
-  void CallVoidMethod(jobject object, const char* strMethodName,
-                      const char* strSignature, ...);
-  float CallFloatMethod(jobject object, const char* strMethodName,
-                        const char* strSignature, ...);
-  int32_t CallIntMethod(jobject object, const char* strMethodName,
-                        const char* strSignature, ...);
-  bool CallBooleanMethod(jobject object, const char* strMethodName,
-                         const char* strSignature, ...);
 };
 
 }  // namespace ndkHelper
