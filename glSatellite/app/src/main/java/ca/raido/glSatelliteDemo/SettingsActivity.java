@@ -29,7 +29,7 @@ public class SettingsActivity extends AppCompatActivity implements
     public static final String PREF_URL = "prefUrl";
     public static final String PREF_TLE = "prefSatellite";
 
-    static final String FMT = "http://www.celestrak.com/NORAD/elements/%s.txt";
+    static final String FMT = "https://www.celestrak.com/NORAD/elements/%s.txt";
 
     private static final String[] PREF_DB = {
         "pref_db_special",
