@@ -65,6 +65,6 @@ public:
     void SuspendSensors();
     void ResumeSensors();
     void TrimMemory();
-    void UpdateZoom(ndk_helper::Vec2 v1, ndk_helper::Vec2 v2);
-    bool IsZoomEnabled(ndk_helper::Vec2 v1, ndk_helper::Vec2 v2);
+    void UpdateZoom(const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2);
+    bool IsZoomEnabled(const ndk_helper::Vec2& v1, const ndk_helper::Vec2& v2);
 };

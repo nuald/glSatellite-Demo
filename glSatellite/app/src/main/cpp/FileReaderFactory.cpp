@@ -13,19 +13,19 @@ using namespace ndk_helper;
 class SysFileReader: public IFileReader {
     ifstream fd_;
 public:
-    SysFileReader(const string& path) :
+    explicit SysFileReader(const string& path) :
                 fd_(path) {
     }
 
-    virtual bool is_open() {
+    bool is_open() override {
         return fd_.is_open();
     }
 
-    virtual bool eof() {
+    bool eof() override {
         return fd_.eof();
     }
 
-    virtual std::string getline() {
+    std::string getline() override {
         std::string str;
         std::getline(fd_, str);
         return str;
@@ -35,7 +35,7 @@ public:
 class AppFileReader: public IFileReader {
     stringstream stream_;
 public:
-    AppFileReader(const string& path) {
+    explicit AppFileReader(const string& path) {
         std::vector < uint8_t > data;
         if (!JNIHelper::GetInstance()->ReadFile(path.c_str(), &data)) {
             if (g_developer_mode) {
@@ -47,15 +47,15 @@ public:
         }
     }
 
-    virtual bool is_open() {
+    bool is_open() override {
         return !eof();
     }
 
-    virtual bool eof() {
+    bool eof() override {
         return stream_.eof();
     }
 
-    virtual std::string getline() {
+    std::string getline() override {
         std::string str;
         std::getline(stream_, str);
         return str;

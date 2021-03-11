@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include "Engine.h"
 #include "DebugUtils.h"
 #include "FileReaderFactory.h"
@@ -17,7 +17,7 @@ Engine::Engine() :
     gl_context_ = ndk_helper::GLContext::GetInstance();
 }
 
-Engine::~Engine() {}
+Engine::~Engine() = default;
 
 void Engine::LoadResources() {
     renderer_.Init();
@@ -69,7 +69,7 @@ void Engine::DrawFrame() {
     if (monitor_.Update(fFPS)) {
         UpdateFPS(fFPS);
     }
-    renderer_.Update(monitor_.GetCurrentTime());
+    renderer_.Update(ndk_helper::PerfMonitor::GetCurrentTime());
 
     renderer_.Render();
 
@@ -80,11 +80,11 @@ void Engine::DrawFrame() {
     }
 }
 
-void Engine::UpdateZoom(Vec2 v1, Vec2 v2) {
+void Engine::UpdateZoom(const Vec2& v1, const Vec2& v2) {
     zoom_distance_ = (v1 - v2).Length();
 }
 
-bool Engine::IsZoomEnabled(Vec2 v1, Vec2 v2) {
+bool Engine::IsZoomEnabled(const Vec2& v1, const Vec2& v2) {
     float zoom_distance = (v1 - v2).Length();
     float diff = zoom_distance - zoom_distance_;
     zoom_distance_ = zoom_distance;

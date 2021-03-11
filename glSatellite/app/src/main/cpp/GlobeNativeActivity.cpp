@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include "Engine.h"
 #include "MessageQueue.h"
 
@@ -21,7 +21,7 @@ void HandleMessageWrapper(android_app* app, android_poll_source* source) {
 extern "C" JNIEXPORT void JNICALL
 Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_useTle(
         JNIEnv *env, jobject thiz, jstring javaString) {
-    const char *nativeString = env->GetStringUTFChars(javaString, 0);
+    const char *nativeString = env->GetStringUTFChars(javaString, nullptr);
     size_t len = strlen(nativeString);
     char *path = reinterpret_cast<char*>(calloc(len + 1, 1));
     strncpy(path, nativeString, len);
@@ -41,7 +41,7 @@ jclass RetrieveClass(JNIEnv *jni, ANativeActivity* activity,
         "(Ljava/lang/String;)Ljava/lang/Class;");
 
     jstring str_class_name = jni->NewStringUTF(class_name);
-    jclass class_retrieved = (jclass)jni->CallObjectMethod(cls, find_class,
+    auto class_retrieved = (jclass)jni->CallObjectMethod(cls, find_class,
         str_class_name);
     jni->DeleteLocalRef(str_class_name);
     return class_retrieved;

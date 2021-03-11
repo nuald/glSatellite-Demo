@@ -51,9 +51,6 @@ void GLContext::InitGLES() {
   const char* versionStr = (const char*)glGetString(GL_VERSION);
   if (strstr(versionStr, "OpenGL ES 3.") && gl3stubInit()) {
     es3_supported_ = true;
-    gl_version_ = 3.0f;
-  } else {
-    gl_version_ = 2.0f;
   }
 
   gles_initialized_ = true;
@@ -102,8 +99,6 @@ bool GLContext::InitEGLSurface() {
                             EGL_DEPTH_SIZE,
                             24,
                             EGL_NONE};
-  color_size_ = 8;
-  depth_size_ = 24;
 
   EGLint num_configs;
   eglChooseConfig(display_, attribs, &config_, 1, &num_configs);
@@ -124,7 +119,6 @@ bool GLContext::InitEGLSurface() {
                               16,
                               EGL_NONE};
     eglChooseConfig(display_, attr16bit, &config_, 1, &num_configs);
-    depth_size_ = 16;
   }
 
   if (!num_configs) {
@@ -132,7 +126,7 @@ bool GLContext::InitEGLSurface() {
     return false;
   }
 
-  surface_ = eglCreateWindowSurface(display_, config_, window_, NULL);
+  surface_ = eglCreateWindowSurface(display_, config_, window_, nullptr);
   eglQuerySurface(display_, surface_, EGL_WIDTH, &screen_width_);
   eglQuerySurface(display_, surface_, EGL_HEIGHT, &screen_height_);
 
@@ -150,7 +144,6 @@ bool GLContext::InitEGLContext() {
     return false;
   }
 
-  context_valid_ = true;
   return true;
 }
 
@@ -164,7 +157,6 @@ EGLint GLContext::Swap() {
       return EGL_SUCCESS;  // Still consider glContext is valid
     } else if (err == EGL_CONTEXT_LOST || err == EGL_BAD_CONTEXT) {
       // Context has been lost!!
-      context_valid_ = false;
       Terminate();
       InitEGLContext();
     }
@@ -189,7 +181,6 @@ void GLContext::Terminate() {
   display_ = EGL_NO_DISPLAY;
   context_ = EGL_NO_CONTEXT;
   surface_ = EGL_NO_SURFACE;
-  context_valid_ = false;
 }
 
 EGLint GLContext::Resume(ANativeWindow* window) {
@@ -245,17 +236,4 @@ bool GLContext::Invalidate() {
   egl_context_initialized_ = false;
   return true;
 }
-
-bool GLContext::CheckExtension(const char* extension) {
-  if (extension == NULL) return false;
-
-  std::string extensions = std::string((char*)glGetString(GL_EXTENSIONS));
-  std::string str = std::string(extension);
-  str.append(" ");
-
-  size_t pos = 0;
-  return extensions.find(extension, pos) != std::string::npos;
-
-}
-
 }  // namespace ndkHelper
