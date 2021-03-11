@@ -2,6 +2,8 @@
 
 Technological demo featuring various areas as using OpenGL ES with Android NDK, custom message queues, interacting JNI and Java activities, using NORAD databases and parsing their data.
 
+![Screenshot](iridium.png?raw=true "Screenshot")
+
 Features:
 
  - C++11 with clang compiler
