@@ -21,10 +21,6 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +45,6 @@ public class GlobeNativeActivity extends NativeActivity {
 
     private LinearLayout mMainLayout;
     private PopupWindow mPopupWindow;
-    private PopupWindow mAdsWindow;
     private TextView mLabel;
     private ProgressBar mProgressBar;
 
@@ -175,8 +170,6 @@ public class GlobeNativeActivity extends NativeActivity {
         System.loadLibrary("GlobeNativeActivity");
     }
 
-    native void showAds();
-
     native void useTle(String path);
 
     private int getStatusBarHeight() {
@@ -222,8 +215,6 @@ public class GlobeNativeActivity extends NativeActivity {
 
                 mLabel = popupView.findViewById(R.id.textViewFPS);
                 mProgressBar = popupView.findViewById(R.id.progressBar);
-
-                showAds();
             }
         });
     }
@@ -240,10 +231,6 @@ public class GlobeNativeActivity extends NativeActivity {
         if (mPopupWindow != null) {
             mPopupWindow.dismiss();
             mPopupWindow = null;
-        }
-        if (mAdsWindow != null) {
-            mAdsWindow.dismiss();
-            mAdsWindow = null;
         }
     }
 
@@ -288,32 +275,6 @@ public class GlobeNativeActivity extends NativeActivity {
                     result = label;
                 }
                 mLabel.setText(result);
-            }
-        });
-    }
-
-    public void showAdsImpl() {
-        if (mAdsWindow != null) {
-            return;
-        }
-
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final View popupView = inflateView(R.layout.ads);
-                mAdsWindow = new PopupWindow(popupView,
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                // Show our UI over NativeActivity window
-                final int height = getStatusBarHeight();
-                mAdsWindow.showAtLocation(mMainLayout, Gravity.NO_GRAVITY, 0, height);
-
-                // Look up the AdView as a resource and load a request.
-                final AdView adView = popupView.findViewById(R.id.adView);
-                final AdRequest adRequest = new AdRequest.Builder().addTestDevice(
-                    AdRequest.DEVICE_ID_EMULATOR).build();
-                adView.loadAd(adRequest);
             }
         });
     }

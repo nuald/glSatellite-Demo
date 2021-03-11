@@ -316,18 +316,6 @@ void Engine::UpdateFPS(float fFPS) {
     app_->activity->vm->DetachCurrentThread();
 }
 
-void Engine::ShowAds() {
-    JNIEnv *jni;
-    app_->activity->vm->AttachCurrentThread(&jni, nullptr);
-
-    //Default class retrieval
-    auto clazz = jni->GetObjectClass(app_->activity->clazz);
-    auto methodID = jni->GetMethodID(clazz, "showAdsImpl", "()V");
-    jni->CallVoidMethod(app_->activity->clazz, methodID);
-
-    app_->activity->vm->DetachCurrentThread();
-}
-
 void Engine::UseTle(char *path) {
     if (g_developer_mode) {
         LOGI("New TLE file: %s", path);
@@ -356,9 +344,7 @@ void Engine::ShowBeam(size_t num) {
 
 void Engine::HandleMessage(Message msg) {
     auto cmd = msg.cmd;
-    if (cmd == SHOW_ADS) {
-        ShowAds();
-    } else if (cmd == USE_TLE) {
+    if (cmd == USE_TLE) {
         UseTle(reinterpret_cast<char*>(msg.payload));
     } else if (cmd == SHOW_BEAM) {
         ShowBeam(reinterpret_cast<size_t>(msg.payload));

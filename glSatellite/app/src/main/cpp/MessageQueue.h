@@ -4,7 +4,7 @@
 
 // Message commands
 enum {
-    SHOW_ADS, USE_TLE, SHOW_BEAM
+    USE_TLE, SHOW_BEAM
 };
 
 struct Message {
