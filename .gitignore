@@ -5,3 +5,4 @@ local.properties
 *.iml
 .externalNativeBuild
 glSatellite/.idea/workspace.xml
+glSatellite/app/.cxx

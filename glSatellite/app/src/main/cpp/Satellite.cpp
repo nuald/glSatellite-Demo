@@ -13,7 +13,7 @@ using namespace std;
 /* Return a substring based on the starting and ending positions provided. */
 static string SubString(const string &value, size_t start, size_t end) {
     string str = value.substr(start, end - start + 1);
-    str.erase(remove_if(str.begin(), str.end(), ptr_fun<int, int>(isspace)),
+    str.erase(remove_if(str.begin(), str.end(), ref(isspace)),
         str.end());
     return str;
 }
@@ -23,7 +23,7 @@ static inline string RTrim(const string &s) {
     string result(s);
     result.erase(
         find_if(result.rbegin(), result.rend(),
-            not1(ptr_fun<int, int>(isspace))).base(), result.end());
+            not1(ref(isspace))).base(), result.end());
     return result;
 }
 

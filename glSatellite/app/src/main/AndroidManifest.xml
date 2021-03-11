@@ -56,5 +56,4 @@
                 android:value="GlobeNativeActivity" />
         </activity>
     </application>
-
 </manifest>
