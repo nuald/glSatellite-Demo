@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.squareup.leakcanary:leakcanary-android-core:3.0-alpha-1@aar" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/2b576f427adac3c4f6de959f23ce0793/transformed/leakcanary-android-core-3.0-alpha-1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2b576f427adac3c4f6de959f23ce0793/transformed/leakcanary-android-core-3.0-alpha-1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2b576f427adac3c4f6de959f23ce0793/transformed/leakcanary-android-core-3.0-alpha-1/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.leakcanary/leakcanary-android-core/3.0-alpha-1/8d6f0c96683da3e73a9e1979c4601a3d8987a2cf/leakcanary-android-core-3.0-alpha-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.leakcanary/leakcanary-android-core/3.0-alpha-1/63376ca353b9fffc2f464e2ddd1dc19623e82a6e/leakcanary-android-core-3.0-alpha-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

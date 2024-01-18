@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/glSatellite.iml" filepath="$PROJECT_DIR$/glSatellite.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/glSatellite.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/glSatellite.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/glSatellite.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/glSatellite.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/glSatellite.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/glSatellite.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/glSatellite.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/glSatellite.app.unitTest.iml" />
     </modules>
   </component>
 </project>
