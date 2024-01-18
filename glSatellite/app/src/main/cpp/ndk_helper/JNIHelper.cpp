@@ -39,7 +39,7 @@ JNIHelper* JNIHelper::GetInstance() {
 //---------------------------------------------------------------------------
 // Ctor
 //---------------------------------------------------------------------------
-JNIHelper::JNIHelper() : activity_(NULL) {}
+JNIHelper::JNIHelper() : activity_(nullptr) {}
 
 //---------------------------------------------------------------------------
 // Dtor
@@ -75,7 +75,7 @@ void JNIHelper::Init(ANativeActivity* activity, const char* helper_class_name) {
 
   jstring packageName = (jstring)env->CallObjectMethod(helper.activity_->clazz,
                                                        midGetPackageName);
-  const char* appname = env->GetStringUTFChars(packageName, NULL);
+  const char* appname = env->GetStringUTFChars(packageName, nullptr);
   helper.app_name_ = std::string(appname);
 
   jclass cls = helper.RetrieveClass(env, helper_class_name);
@@ -127,7 +127,7 @@ void JNIHelper::Init(ANativeActivity* activity, const char* helper_class_name,
 //---------------------------------------------------------------------------
 bool JNIHelper::ReadFile(const char* fileName,
                          std::vector<uint8_t>* buffer_ref) {
-  if (activity_ == NULL) {
+  if (activity_ == nullptr) {
     LOGI(
         "JNIHelper has not been initialized.Call init() to initialize the "
         "helper");
@@ -141,7 +141,7 @@ bool JNIHelper::ReadFile(const char* fileName,
   JNIEnv* env = AttachCurrentThread();
 
   jstring str_path = GetExternalFilesDirJString(env);
-  const char* path = env->GetStringUTFChars(str_path, NULL);
+  const char* path = env->GetStringUTFChars(str_path, nullptr);
   std::string s(path);
 
   if (fileName[0] != '/') {
@@ -174,7 +174,7 @@ bool JNIHelper::ReadFile(const char* fileName,
     }
     uint8_t* data = (uint8_t*)AAsset_getBuffer(assetFile);
     int32_t size = AAsset_getLength(assetFile);
-    if (data == NULL) {
+    if (data == nullptr) {
       AAsset_close(assetFile);
 
       LOGI("Failed to load:%s", fileName);
@@ -191,7 +191,7 @@ bool JNIHelper::ReadFile(const char* fileName,
 
 uint32_t JNIHelper::LoadTexture(const char* file_name, int32_t* outWidth,
                                 int32_t* outHeight, bool* hasAlpha) {
-  if (activity_ == NULL) {
+  if (activity_ == nullptr) {
     LOGI(
         "JNIHelper has not been initialized. Call init() to initialize the "
         "helper");
@@ -233,13 +233,13 @@ uint32_t JNIHelper::LoadTexture(const char* file_name, int32_t* outWidth,
   }
   LOGI("Loaded texture original size:%dx%d alpha:%d", width, height,
        (int32_t)alpha);
-  if (outWidth != NULL) {
+  if (outWidth != nullptr) {
     *outWidth = width;
   }
-  if (outHeight != NULL) {
+  if (outHeight != nullptr) {
     *outHeight = height;
   }
-  if (hasAlpha != NULL) {
+  if (hasAlpha != nullptr) {
     *hasAlpha = alpha;
   }
 
@@ -274,18 +274,18 @@ jclass JNIHelper::RetrieveClass(JNIEnv* jni, const char* class_name) {
 }
 
 jstring JNIHelper::GetExternalFilesDirJString(JNIEnv* env) {
-  if (activity_ == NULL) {
+  if (activity_ == nullptr) {
     LOGI(
         "JNIHelper has not been initialized. Call init() to initialize the "
         "helper");
-    return NULL;
+    return nullptr;
   }
 
   // Invoking getExternalFilesDir() java API
   jclass cls_Env = env->FindClass(NATIVEACTIVITY_CLASS_NAME);
   jmethodID mid = env->GetMethodID(cls_Env, "getExternalFilesDir",
                                    "(Ljava/lang/String;)Ljava/io/File;");
-  jobject obj_File = env->CallObjectMethod(activity_->clazz, mid, NULL);
+  jobject obj_File = env->CallObjectMethod(activity_->clazz, mid, nullptr);
   jclass cls_File = env->FindClass("java/io/File");
   jmethodID mid_getPath =
       env->GetMethodID(cls_File, "getPath", "()Ljava/lang/String;");
@@ -296,19 +296,19 @@ jstring JNIHelper::GetExternalFilesDirJString(JNIEnv* env) {
 
 jobject JNIHelper::CallObjectMethod(const char* strMethodName,
                                     const char* strSignature, ...) {
-  if (activity_ == NULL) {
+  if (activity_ == nullptr) {
     LOGI(
         "JNIHelper has not been initialized. Call init() to initialize the "
         "helper");
-    return NULL;
+    return nullptr;
   }
 
   JNIEnv* env = AttachCurrentThread();
   jmethodID mid =
       env->GetMethodID(jni_helper_java_class_, strMethodName, strSignature);
-  if (mid == NULL) {
+  if (mid == nullptr) {
     LOGI("method ID %s, '%s' not found", strMethodName, strSignature);
-    return NULL;
+    return nullptr;
   }
 
   va_list args;
@@ -322,8 +322,8 @@ jobject JNIHelper::CallObjectMethod(const char* strMethodName,
 // This JNI function is invoked from UIThread asynchronously
 extern "C" {
 JNIEXPORT void Java_com_sample_helper_NDKHelper_RunOnUiThreadHandler(
-    JNIEnv* env, jobject thiz, int64_t pointer) {
-  std::function<void()>* pCallback = (std::function<void()>*)pointer;
+        [[maybe_unused]] JNIEnv* env, [[maybe_unused]] jobject thiz, int64_t pointer) {
+  auto pCallback = reinterpret_cast<std::function<void()>*>(pointer);
   (*pCallback)();
 
   // Deleting temporary object

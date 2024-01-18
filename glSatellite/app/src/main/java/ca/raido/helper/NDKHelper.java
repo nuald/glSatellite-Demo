@@ -178,7 +178,6 @@ public class NDKHelper {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public int getNativeAudioBufferSize() {
         final AudioManager am = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
         final String framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);

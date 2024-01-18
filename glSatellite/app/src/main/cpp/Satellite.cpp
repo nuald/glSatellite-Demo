@@ -77,16 +77,15 @@ double CurrentDaynum() {
     /* Read the system clock and return the number
      of days since 31Dec79 00:00:00 UTC (daynum 0) */
 
-    int x;
     struct timeval tptr;
-    double usecs, seconds;
 
-    x = gettimeofday(&tptr, nullptr);
+    if (!gettimeofday(&tptr, nullptr)) {
+        auto usecs = 0.000001 * (double)tptr.tv_usec;
+        auto seconds = usecs + (double)tptr.tv_sec;
 
-    usecs = 0.000001 * (double)tptr.tv_usec;
-    seconds = usecs + (double)tptr.tv_sec;
-
-    return ((seconds / 86400.0) - 3651.0);
+        return ((seconds / 86400.0) - 3651.0);
+    }
+    return 0;
 }
 
 void Satellite::UpdatePosition() {

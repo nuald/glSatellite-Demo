@@ -40,7 +40,7 @@ double PerfMonitor::UpdateTick(double currentTick) {
 
 bool PerfMonitor::Update(float &fFPS) {
   struct timeval Time;
-  gettimeofday(&Time, NULL);
+  gettimeofday(&Time, nullptr);
 
   double time = Time.tv_sec + Time.tv_usec * 1.0 / 1000000.0;
   double tick = time - last_tick_;

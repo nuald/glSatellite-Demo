@@ -6,15 +6,7 @@
 
 using namespace ndk_helper;
 
-Engine::Engine() :
-            initialized_resources_(false),
-            has_focus_(false),
-            no_error_(true),
-            zoom_distance_(0.f),
-            app_(nullptr),
-            sensor_manager_(nullptr),
-            accelerometer_sensor_(nullptr),
-            sensor_event_queue_(nullptr) {
+Engine::Engine() {
     gl_context_ = ndk_helper::GLContext::GetInstance();
 }
 
@@ -222,7 +214,7 @@ ASensorManager* AcquireASensorManagerInstance(android_app* app) {
             dlsym(androidHandle, "ASensorManager_getInstanceForPackage");
     if (getInstanceForPackageFunc) {
         JNIEnv* env = nullptr;
-        app->activity->vm->AttachCurrentThread(&env, NULL);
+        app->activity->vm->AttachCurrentThread(&env, nullptr);
 
         jclass android_content_Context = env->GetObjectClass(app->activity->clazz);
         jmethodID midGetPackageName = env->GetMethodID(android_content_Context,

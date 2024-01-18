@@ -86,7 +86,7 @@ class GLContext {
     return &instance;
   }
 
-  bool Init(ANativeWindow* window);
+  void Init(ANativeWindow* window);
   EGLint Swap();
   bool Invalidate();
 

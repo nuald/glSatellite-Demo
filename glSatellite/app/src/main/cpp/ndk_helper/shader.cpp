@@ -26,7 +26,7 @@ namespace ndk_helper {
 
 bool shader::CompileShader(GLuint *shader, const GLenum type,
                            const GLchar *source, const int32_t iSize) {
-  if (source == NULL || iSize <= 0) {
+  if (source == nullptr || iSize <= 0) {
       return false;
   }
 
@@ -44,7 +44,7 @@ bool shader::CompileShader(GLuint *shader, const GLenum type,
     GLint maxLength = 0;
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-    //The maxLength includes the NULL character
+    //The maxLength includes the \0 character
     std::vector<GLchar> infoLog(maxLength);
     glGetShaderInfoLog(*shader, maxLength, &maxLength, &infoLog[0]);
     std::string log(infoLog.begin(), infoLog.end());

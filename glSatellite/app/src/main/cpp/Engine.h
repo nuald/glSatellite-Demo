@@ -11,10 +11,10 @@ class Engine {
 
     ndk_helper::GLContext *gl_context_;
 
-    bool initialized_resources_;
-    bool has_focus_;
-    bool no_error_;
-    float zoom_distance_;
+    bool initialized_resources_ = false;
+    bool has_focus_ = false;
+    bool no_error_ = true;
+    float zoom_distance_ = 0.f;
 
     // Gesture detectors
     ndk_helper::DoubletapDetector doubletap_detector_;
@@ -25,11 +25,11 @@ class Engine {
     ndk_helper::PerfMonitor monitor_;
     ndk_helper::TapCamera tap_camera_;
 
-    android_app *app_;
+    android_app *app_ = nullptr;
 
-    ASensorManager *sensor_manager_;
-    const ASensor *accelerometer_sensor_;
-    ASensorEventQueue *sensor_event_queue_;
+    ASensorManager *sensor_manager_ = nullptr;
+    const ASensor *accelerometer_sensor_ = nullptr;
+    ASensorEventQueue *sensor_event_queue_ = nullptr;
 
     void UpdateFPS(float fFPS);
     void ShowUI();

@@ -13,14 +13,14 @@ bool g_developer_mode = false;
    - message queue helpers
    - additional NDK helpers
 */
-void HandleMessageWrapper(android_app* app, android_poll_source* source) {
+void HandleMessageWrapper([[maybe_unused]] android_app* app, [[maybe_unused]] android_poll_source* source) {
     Message msg = ReadMessageQueue(g_msgread);
     g_engine.HandleMessage(msg);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_ca_raido_glSatelliteDemo_GlobeNativeActivity_useTle(
-        JNIEnv *env, jobject thiz, jstring javaString) {
+        JNIEnv *env, [[maybe_unused]] jobject thiz, jstring javaString) {
     const char *nativeString = env->GetStringUTFChars(javaString, nullptr);
     size_t len = strlen(nativeString);
     char *path = reinterpret_cast<char*>(calloc(len + 1, 1));

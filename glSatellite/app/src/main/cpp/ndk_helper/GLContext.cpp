@@ -61,8 +61,8 @@ void GLContext::InitGLES() {
 //--------------------------------------------------------------------------------
 GLContext::~GLContext() { Terminate(); }
 
-bool GLContext::Init(ANativeWindow* window) {
-  if (egl_context_initialized_) return true;
+void GLContext::Init(ANativeWindow* window) {
+  if (egl_context_initialized_) return;
 
   //
   // Initialize EGL
@@ -73,8 +73,6 @@ bool GLContext::Init(ANativeWindow* window) {
   InitGLES();
 
   egl_context_initialized_ = true;
-
-  return true;
 }
 
 bool GLContext::InitEGLSurface() {
@@ -137,7 +135,7 @@ bool GLContext::InitEGLContext() {
   const EGLint context_attribs[] = {EGL_CONTEXT_CLIENT_VERSION,
                                     2,  // Request opengl ES2.0
                                     EGL_NONE};
-  context_ = eglCreateContext(display_, config_, NULL, context_attribs);
+  context_ = eglCreateContext(display_, config_, nullptr, context_attribs);
 
   if (eglMakeCurrent(display_, surface_, surface_, context_) == EGL_FALSE) {
     LOGW("Unable to eglMakeCurrent");
@@ -194,7 +192,7 @@ EGLint GLContext::Resume(ANativeWindow* window) {
 
   // Create surface
   window_ = window;
-  surface_ = eglCreateWindowSurface(display_, config_, window_, NULL);
+  surface_ = eglCreateWindowSurface(display_, config_, window_, nullptr);
   eglQuerySurface(display_, surface_, EGL_WIDTH, &screen_width_);
   eglQuerySurface(display_, surface_, EGL_HEIGHT, &screen_height_);
 
